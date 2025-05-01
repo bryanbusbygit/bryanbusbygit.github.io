@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bryan’s 90s Math Portfolio</title>
+
+  <!-- Core Styles -->
+  <style>
+    /* Reset potential blink/marquee */
+    blink, marquee { display: inline; }
+    /* Basic page layout */
+    body {
+      background-color: #f0f0f0;
+      color: #333;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #fff;
+      border-bottom: 2px solid #ccc;
+      padding: 20px;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 10px;
+      color: #0066cc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    main {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .intro {
+      margin-bottom: 40px;
+    }
+    .formulas div {
+      background: #fff;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #0066cc;
+      font-size: 1.2em;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 40px 0;
+    }
+    .gallery img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 3px solid #ccc;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      transform: rotate(var(--rot, 0deg));
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #fff;
+      border-top: 2px solid #ccc;
+      font-size: 0.9em;
+    }
+  </style>
+
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Bryan’s Math Zone</h1>
+    <nav>
+      <a href="index.html">Home</a> |
+      <a href="projects.html">Projects</a> |
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p>Welcome to a playful, expressive math portfolio—nostalgic design meets modern LaTeX.</p>
+    </section>
+
+    <section class="formulas">
+      <h2>Key Formulas</h2>
+      <div>$$e^{i\pi} + 1 = 0$$</div>
+      <div>$$ (x+y)^n = \sum_{k=0}^n \binom{n}{k} x^{n-k} y^k $$</div>
+    </section>
+
+    <section class="gallery">
+      <h2>Visual Gallery</h2>
+      <img src="images/chalkboard_panorama.jpg" alt="Chalkboard Panorama" style="--rot:-3deg">
+      <img src="images/chalkboard_closeup.jpg" alt="Chalkboard Close-up" style="--rot:2deg">
+      <img src="images/forest_creek.jpg" alt="Forest Creek" style="--rot:-2deg">
+      <img src="images/painting1.jpg" alt="Abstract Painting 1" style="--rot:1deg">
+      <img src="images/painting2.jpg" alt="Abstract Painting 2" style="--rot:-1deg">
+      <img src="images/mosaic_art.jpg" alt="Mosaic Art" style="--rot:3deg">
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Bryan Busby</p>
+  </footer>
+</body>
+</html>
