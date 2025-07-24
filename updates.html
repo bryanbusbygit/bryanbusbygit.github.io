@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Updates – Bryan C. Busby</title>
+  <meta name="description" content="Updates, posts, and media by Bryan C. Busby (mathematics, graph theory, combinatorics).">
+  <style>
+    :root{
+      --bg-glass:255 255 255 / 0.88;
+      --ink:#000;
+      --accent-link:#2020ff;
+      --shadow:8px 8px 0 #000;
+      --mono:'Courier New',Courier,monospace;
+      --card-border:#000;
+      --overlay-bg:rgba(0,0,0,.35);
+      --overlay-hover:rgba(0,0,0,.50);
+      --transition-fast:.18s cubic-bezier(.66,.04,.3,1);
+      --bg-overlay-top:rgba(0,0,0,.10);
+      --bg-overlay-bottom:rgba(0,0,0,.10);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      --bg-img:url('assets/view1.jpg');
+      font-family:var(--mono);
+      color:var(--ink);
+      line-height:1.45;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      padding:48px 0 64px;
+      background:linear-gradient(var(--bg-overlay-top),var(--bg-overlay-bottom)), var(--bg-img) center/cover no-repeat fixed;
+      background-attachment:fixed;
+      background-position:center;
+      background-size:cover;
+      -webkit-font-smoothing:antialiased;
+    }
+    .container{
+      width:clamp(320px,72ch,1000px);
+      margin-inline:auto;
+      background:rgba(var(--bg-glass));
+      border:4px solid #000;
+      box-shadow:var(--shadow);
+      padding:clamp(24px,4vw,40px) clamp(22px,4vw,42px) clamp(40px,6vw,60px);
+      backdrop-filter:blur(4px);
+    }
+    header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;margin-bottom:28px;gap:20px;}
+    header h1{font-size:2rem;letter-spacing:.5px;}
+    nav{display:flex;gap:18px;flex-wrap:wrap;font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+    nav a{color:var(--accent-link);text-decoration:none;position:relative;padding:4px 2px;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 4px,rgba(0,0,0,.05) 4px 5px);background-size:100% 9px;animation:scan 12s linear infinite;}
+    nav a[aria-current="page"]{text-decoration:underline;}
+    nav a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:#000;transition:width .28s cubic-bezier(.66,.04,.3,1),background-color .3s;}
+    nav a:hover::after,nav a:focus-visible::after{width:100%;background:var(--accent-link);}
+    @keyframes scan{0%{background-position:0 0;}100%{background-position:0 9px;}}
+
+    /* grid */
+    #updates-grid{
+      list-style:none;
+      display:grid;
+      gap:26px;
+      padding:0;
+      margin:0 0 40px;
+    }
+    @media (min-width:900px){#updates-grid{grid-template-columns:repeat(3,1fr);}}
+    @media (min-width:600px) and (max-width:899px){#updates-grid{grid-template-columns:repeat(2,1fr);}}
+    @media (max-width:599px){#updates-grid{grid-template-columns:1fr;}}
+
+    /* card */
+    .update-card{
+      position:relative;aspect-ratio:4/3;display:flex;flex-direction:column;justify-content:flex-end;
+      border:3px solid var(--card-border);background:#fff;text-decoration:none;color:inherit;
+      box-shadow:4px 4px 0 #000;transition:transform var(--transition-fast),box-shadow var(--transition-fast);
+      overflow:hidden;width:100%;height:auto;
+    }
+    .update-card:focus-visible{outline:3px solid #000;outline-offset:2px;}
+    .update-card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 #000;}
+    .card-media{position:absolute;inset:0;overflow:hidden;background:#111;z-index:0;}
+    .card-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease;}
+    .update-card:hover .card-media img{transform:scale(1.04);}
+    .card-overlay{position:absolute;inset:0;background:var(--overlay-bg);opacity:.4;transition:opacity var(--transition-fast),background .3s;pointer-events:none;}
+    .update-card:hover .card-overlay{opacity:.55;background:var(--overlay-hover);}
+    .card-body{position:relative;padding:12px;background:rgba(var(--bg-glass));z-index:1;}
+    .card-title{font-size:1rem;font-weight:700;line-height:1.2;text-align:left;}
+
+    /* iframe preview in card */
+    .card-media iframe{
+      width:100%;height:100%;border:0;pointer-events:none;display:block;
+      filter:grayscale(.15) contrast(1.1);
+      transition:filter .25s;
+    }
+    .update-card:hover .card-media iframe{filter:grayscale(0) contrast(1);}
+
+    /* post view */
+    #post-view{display:none;animation:fadeIn .3s ease;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+    .post-header{margin-bottom:14px;}
+    .post-header h2{font-size:1.5rem;line-height:1.25;margin-bottom:6px;}
+    .post-meta{font-size:.6rem;letter-spacing:1px;text-transform:uppercase;color:#222;margin-bottom:14px;}
+    .post-hero{width:100%;aspect-ratio:4/3;border:3px solid #000;box-shadow:4px 4px 0 #000;margin-bottom:20px;overflow:hidden;position:relative;background:#111;}
+    .post-hero img,.post-hero iframe{width:100%;height:100%;display:block;border:none;object-fit:cover;}
+    .post-content{font-size:.9rem;line-height:1.45;}
+    .post-content p{margin:0 0 14px;}
+    .post-content pre{background:#111;color:#f5f5f5;padding:12px 16px;overflow:auto;border:2px solid #000;box-shadow:4px 4px 0 #000;font-size:.75rem;}
+    .back-link{display:inline-block;margin-bottom:18px;font-size:.75rem;font-weight:700;text-decoration:none;color:var(--accent-link);position:relative;padding:4px 2px;}
+    .back-link::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:#000;transition:width .25s;}
+    .back-link:hover::after{width:100%;}
+    .post-license{font-size:.55rem;letter-spacing:1px;opacity:.85;margin-top:26px;}
+
+    footer{text-align:center;font-size:.6rem;border-top:2px solid #000;padding-top:12px;margin-top:40px;letter-spacing:1px;opacity:.9;}
+    footer a{color:var(--accent-link);text-decoration:none;}
+    footer a:hover{text-decoration:underline;}
+
+    @media (max-width:720px){
+      .container{padding:32px 20px 50px;}
+      header{text-align:center;justify-content:center;}
+      nav{justify-content:center;}
+    }
+    @media (prefers-reduced-motion: reduce){
+      nav a{animation:none;}
+      .update-card:hover{transform:none;box-shadow:4px 4px 0 #000;}
+      .update-card:hover .card-media img{transform:none;}
+    }
+  </style>
+</head>
+<body>
+<main class="container" id="top">
+  <header>
+    <h1>Updates</h1>
+    <nav aria-label="Site">
+      <a href="index.html">Home</a>
+      <a href="index.html#research">Research</a>
+      <a href="index.html#publications">Papers</a>
+      <a href="index.html#cv">CV</a>
+      <a href="index.html#connect">Connect</a>
+      <a href="updates.html" aria-current="page">Updates</a>
+    </nav>
+  </header>
+
+  <section id="grid-view" aria-label="Updates list">
+    <ul id="updates-grid"></ul>
+  </section>
+
+  <section id="post-view" aria-label="Post" tabindex="-1">
+    <a href="#" class="back-link" id="back-link">← Back to Updates</a>
+    <div class="post-header">
+      <h2 id="post-title"></h2>
+      <div class="post-meta" id="post-meta"></div>
+    </div>
+    <div class="post-hero" id="post-hero"></div>
+    <article class="post-content" id="post-content"></article>
+    <div class="post-license" id="post-license"></div>
+  </section>
+
+  <footer>
+    &copy; 2025 Bryan C. Busby · All rights reserved · <a href="#top">Top</a>
+  </footer>
+</main>
+
+<script>
+/* ---------- POSTS ---------- */
+const POSTS = [
+  {
+    slug:"2024-07-01-trees",
+    title:"Trees",
+    date:"2024-07-01",
+    type:"video",
+    img:"https://img.youtube.com/vi/ld55N1bJiuo/maxresdefault.jpg",
+    alt:"Trees",
+    content:`<p></p>`,
+    license:"© 2025 B. Busby"
+  },
+  {
+    slug:"2024-03-05-six-people-party-problem",
+    title:"The Six People Party Problem",
+    date:"2024-03-05",
+    type:"video",
+    img:"https://img.youtube.com/vi/-kuf7N2idOo/maxresdefault.jpg",
+    alt:"Six people party problem",
+    content:`<p>In this video, I explain the classic Six People Party Problem using graph theory. We explore how Ramsey Theory guarantees that in any group of six people, there will always be either three mutual friends or three mutual strangers. The explanation is framed using simple graph-theoretic ideas like edge colorings and cliques.</p>`,
+    license:"© 2025 B. Busby"
+  },
+  {
+    slug:"2024-02-02-directed-graphs",
+    title:"Directed graphs",
+    date:"2024-02-02",
+    type:"video",
+    img:"https://img.youtube.com/vi/-e__pw1Jtq0/maxresdefault.jpg",
+    alt:"Directed graphs",
+    content:`<p>Your notes here…</p>`,
+    license:"© 2025 B. Busby"
+  },
+  {
+    slug:"2024-01-31-what-is-a-graph",
+    title:"What is a graph?",
+    date:"2024-01-31",
+    type:"video",
+    img:"https://img.youtube.com/vi/pJfya9tQfh4/maxresdefault.jpg",
+    alt:"What is a graph?",
+    content:`<p>Add notes here…</p>`,
+    license:"© 2025 B. Busby"
+  }
+];
+
+const grid      = document.getElementById('updates-grid');
+const gridView  = document.getElementById('grid-view');
+const postView  = document.getElementById('post-view');
+const postTitle = document.getElementById('post-title');
+const postMeta  = document.getElementById('post-meta');
+const postHero  = document.getElementById('post-hero');
+const postContent = document.getElementById('post-content');
+const postLicense = document.getElementById('post-license');
+const backLink  = document.getElementById('back-link');
+
+function renderGrid(){
+  grid.innerHTML = '';
+
+  // videos
+  POSTS.slice().sort((a,b)=>b.date.localeCompare(a.date)).forEach(post=>{
+    const li = document.createElement('li');
+    const a  = document.createElement('a');
+    a.className = 'update-card';
+    a.href      = `#${post.slug}`;
+    a.innerHTML = `
+      <div class="card-media">
+        <img src="${post.img}" alt="${post.alt}" loading="lazy">
+        <div class="card-overlay"></div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${post.title}</div>
+      </div>`;
+    a.addEventListener('click',e=>{ e.preventDefault(); showPost(post.slug); });
+    li.appendChild(a);
+    grid.appendChild(li);
+  });
+}
+
+function extractYouTubeID(url){
+  const m = url.match(/(?:vi\/|v=|\/embed\/)([A-Za-z0-9_-]{11})/);
+  return m?m[1]:null;
+}
+function showPost(slug){
+  const post = POSTS.find(p=>p.slug===slug);
+  if(!post) return showGrid();
+  history.pushState({slug},'',`#${slug}`);
+  postTitle.textContent   = post.title;
+  postMeta.textContent    = post.date;
+  postLicense.textContent = post.license;
+
+  if(post.type==='video'){
+    const id = extractYouTubeID(post.img);
+    postHero.innerHTML = id
+      ? `<iframe frameborder="0"
+                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                 allowfullscreen
+                 src="https://www.youtube.com/embed/${id}?rel=0"></iframe>`
+      : `<img src="${post.img}" alt="${post.alt}" loading="lazy">`;
+  } else {
+    postHero.innerHTML = `<img src="${post.img}" alt="${post.alt}" loading="lazy">`;
+  }
+
+  postContent.innerHTML = post.content;
+  gridView.style.display = 'none';
+  postView.style.display = 'block';
+  postView.focus();
+}
+function showGrid(){
+  history.pushState({},'',window.location.pathname);
+  postView.style.display = 'none';
+  gridView.style.display = 'block';
+}
+backLink.addEventListener('click',e=>{ e.preventDefault(); showGrid(); });
+window.addEventListener('popstate',e=>{
+  if(e.state && e.state.slug) showPost(e.state.slug);
+  else showGrid();
+});
+
+renderGrid();
+if(location.hash) showPost(location.hash.slice(1));
+else showGrid();
+</script>
+</body>
+</html>

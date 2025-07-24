@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title></title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#fff;font-family:"Courier New",monospace}
+canvas{position:fixed;inset:0}
+#back{
+  position:fixed;top:14px;left:16px;z-index:9999;width:42px;height:42px;background:#fff;
+  color:#ff7f00;border:1px solid #888;font:700 14px/42px "Courier New",monospace;text-align:center;
+  cursor:pointer;user-select:none;overflow:hidden;transition:color .12s,border-color .12s;
+}
+#back::before{content:"←";position:relative;z-index:2;}
+#back::after{
+  content:"10100110 010 111001";position:absolute;inset:0;color:#aaa;
+  font:700 10px/10px "Courier New",monospace;text-align:left;padding:4px 6px;
+  opacity:.15;animation:scan 1.8s steps(12) infinite;
+}
+#back:hover{color:#000;border-color:#ff7f00;}#back:hover::after{opacity:.3;}
+@keyframes scan{0%{transform:translateY(0)}100%{transform:translateY(-100%)}}
+@media(prefers-reduced-motion:reduce){#back::after{animation:none}}
+
+#hud{
+  position:fixed;right:10px;bottom:8px;color:#666;font-size:10px;letter-spacing:1px;pointer-events:none;z-index:9999;
+}
+
+#menu{
+  position:fixed;top:14px;right:16px;z-index:9999;display:flex;gap:6px;flex-wrap:wrap;
+  font-size:10px;letter-spacing:1px;
+}
+#menu button{
+  background:#fff;border:1px solid #888;padding:4px 6px;cursor:pointer;
+  font:700 10px/1 "Courier New",monospace;text-transform:uppercase;
+}
+#menu button.active{border-color:#ff7f00;color:#ff7f00;}
+#menu button:hover{border-color:#000;color:#000;}
+
+#panel-toggle{
+  position:fixed;top:14px;right:16px;transform:translateY(46px);z-index:9999;
+  width:32px;height:32px;background:#fff;border:1px solid #888;cursor:pointer;
+  font:700 14px/32px "Courier New",monospace;text-align:center;
+}
+#panel-toggle:hover{border-color:#000;color:#000;}
+#panel{
+  position:fixed;top:60px;right:16px;width:200px;max-height:70vh;overflow:auto;
+  background:#fff;border:2px solid #000;box-shadow:6px 6px 0 #000;padding:10px 12px;z-index:9999;
+  font-size:10px;line-height:1.5;letter-spacing:1px;display:none;
+}
+#panel label{display:block;margin:6px 0 2px;}
+#panel input[type=range]{width:100%;}
+#panel .row{display:flex;justify-content:space-between;font-size:9px;}
+#panel hr{margin:8px 0;border:none;border-top:1px dashed #aaa;}
+#panel input[type=checkbox]{vertical-align:middle;margin-right:4px;}
+</style>
+</head>
+<body>
+<a id="back" href="updates.html" aria-label="back"></a>
+
+<div id="menu">
+  <button data-algo="chip" class="active">1 Chip</button>
+  <button data-algo="tree">2 Tree</button>
+  <button data-algo="mst">3 Kruskal</button>
+  <button data-algo="prim">4 Prim</button>
+  <button data-algo="bfs">5 BFS</button>
+</div>
+
+<button id="panel-toggle">⋮</button>
+<div id="panel">
+  <label>Vertices <span id="vCount">8</span></label>
+  <input id="vSlider" type="range" min="6" max="11" value="8">
+  <label>Speed <span id="spdLbl">1.0×</span></label>
+  <input id="spdSlider" type="range" min="0.3" max="3" step="0.1" value="1">
+  <label>Curve Bend <span id="bendLbl">0.15</span></label>
+  <input id="bendSlider" type="range" min="0" max="0.4" step="0.01" value="0.15">
+  <hr>
+  <label>Heat Decay (chip) <span id="heatLbl">0.90</span></label>
+  <input id="heatSlider" type="range" min="0.6" max="0.98" step="0.01" value="0.90">
+  <div class="row"><label><input id="kickChk" type="checkbox" checked>Chip auto-kick</label></div>
+  <hr>
+  <div class="row"><label><input id="wLblChk" type="checkbox" checked>Show weights (MST)</label></div>
+</div>
+
+<canvas id="cv"></canvas>
+<div id="hud"></div>
+
+<script>
+/* ========= SETTINGS & UI ========= */
+const SETTINGS={N:8,speed:1,curve:0.15,heatDecay:0.90,chipAutoKick:true,showWeights:true};
+const panel=document.getElementById('panel');
+document.getElementById('panel-toggle').onclick=()=>panel.style.display=panel.style.display==='none'?'block':'none';
+document.addEventListener('keydown',e=>{if(e.key==='h'||e.key==='H')document.getElementById('panel-toggle').click();});
+['vSlider','spdSlider','bendSlider','heatSlider'].forEach(id=>document.getElementById(id).addEventListener('input',sync));
+document.getElementById('kickChk').onchange=e=>SETTINGS.chipAutoKick=e.target.checked;
+document.getElementById('wLblChk').onchange=e=>SETTINGS.showWeights=e.target.checked;
+function sync(){
+  SETTINGS.N=+vSlider.value; vCount.textContent=vSlider.value;
+  SETTINGS.speed=+spdSlider.value; spdLbl.textContent=SETTINGS.speed.toFixed(1)+'×';
+  SETTINGS.curve=+bendSlider.value; bendLbl.textContent=SETTINGS.curve.toFixed(2);
+  SETTINGS.heatDecay=+heatSlider.value; heatLbl.textContent=SETTINGS.heatDecay.toFixed(2);
+}
+sync();
+
+/* ========= COMMON ========= */
+const canvas=document.getElementById('cv'), ctx=canvas.getContext('2d');
+let W,H; function resize(){W=innerWidth;H=innerHeight;canvas.width=W;canvas.height=H;} resize(); addEventListener('resize',resize);
+const randInt=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function segmentsIntersect(a,b,c,d){
+  function ccw(p1,p2,p3){return (p3.y-p1.y)*(p2.x-p1.x)>(p2.y-p1.y)*(p3.x-p1.x);}
+  if(a===c||a===d||b===c||b===d) return false;
+  return ccw(a,c,d)!==ccw(b,c,d)&&ccw(a,b,c)!==ccw(a,b,d);
+}
+function centerGraph(nodes){
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  for(const n of nodes){if(n.x<minX)minX=n.x;if(n.x>maxX)maxX=n.x;if(n.y<minY)minY=n.y;if(n.y>maxY)maxY=n.y;}
+  const cx=(minX+maxX)/2, cy=(minY+maxY)/2, tx=W/2-cx, ty=H/2-cy; nodes.forEach(n=>{n.x+=tx;n.y+=ty;});
+}
+function buildPlanarGraph(N,MARGIN=90){
+  const nodes=[]; for(let i=0;i<N;i++) nodes.push({x:MARGIN+Math.random()*(W-2*MARGIN),y:MARGIN+Math.random()*(H-2*MARGIN),pulse:0});
+  let edges=[]; for(let i=0;i<N;i++) edges.push({u:i,v:(i+1)%N});
+  let tries=0; while(tries<200){
+    tries++; let u=randInt(0,N-1), v=randInt(0,N-1);
+    if(u===v) continue;
+    if(edges.some(e=>(e.u===u&&e.v===v)||(e.u===v&&e.v===u))) continue;
+    const a=nodes[u], b=nodes[v]; let ok=true;
+    for(const e of edges){const c=nodes[e.u], d=nodes[e.v]; if(segmentsIntersect(a,b,c,d)){ok=false;break;}}
+    if(ok) edges.push({u,v}); if(edges.length>N+N) break;
+  }
+  const k = Math.min(W,H)/Math.sqrt(N+2);
+  for(let t=0;t<160;t++){
+    for(const n of nodes){n.fx=0;n.fy=0;}
+    for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
+      let vx=nodes[i].x-nodes[j].x, vy=nodes[i].y-nodes[j].y, d2=vx*vx+vy*vy+0.01, s=Math.sqrt((k*k)/d2);
+      nodes[i].fx+=vx*s; nodes[i].fy+=vy*s; nodes[j].fx-=vx*s; nodes[j].fy-=vy*s;
+    }
+    for(const e of edges){
+      const a=nodes[e.u], b=nodes[e.v];
+      let vx=b.x-a.x, vy=b.y-a.y, d=Math.sqrt(vx*vx+vy*vy)+0.01, f=(d*d)/k, fx=vx/d*f, fy=vy/d*f;
+      a.fx+=fx; a.fy+=fy; b.fx-=fx; b.fy-=fy;
+    }
+    nodes.forEach(n=>{n.x=Math.min(W-MARGIN,Math.max(MARGIN,n.x+n.fx*0.0015)); n.y=Math.min(H-MARGIN,Math.max(MARGIN,n.y+n.fy*0.0015));});
+  }
+  centerGraph(nodes);
+  const adj=Array.from({length:N},()=>[]);
+  edges.forEach(e=>{adj[e.u].push(e.v);adj[e.v].push(e.u);});
+  return {nodes,edges,adj};
+}
+function bezierPoint(a,b,t){
+  const mx=(a.x+b.x)/2,my=(a.y+b.y)/2, dx=b.y-a.y, dy=-(b.x-a.x), curve=SETTINGS.curve;
+  const cx=mx+dx*curve, cy=my+dy*curve;
+  return {x:(1-t)*(1-t)*a.x + 2*(1-t)*t*cx + t*t*b.x, y:(1-t)*(1-t)*a.y + 2*(1-t)*t*cy + t*t*b.y};
+}
+function drawBezierEdge(a,b,stroke,alpha=1,width=2){
+  const mx=(a.x+b.x)/2,my=(a.y+b.y)/2, dx=b.y-a.y, dy=-(b.x-a.x), curve=SETTINGS.curve;
+  const cx=mx+dx*curve, cy=my+dy*curve;
+  ctx.globalAlpha=alpha; ctx.strokeStyle=stroke; ctx.lineWidth=width;
+  ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.quadraticCurveTo(cx,cy,b.x,b.y); ctx.stroke(); ctx.globalAlpha=1;
+}
+function drawLine(a,b,stroke,alpha=1,width=2,dash=null){
+  ctx.globalAlpha=alpha; ctx.strokeStyle=stroke; ctx.lineWidth=width;
+  if(dash){ctx.setLineDash(dash);} ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  if(dash)ctx.setLineDash([]); ctx.globalAlpha=1;
+}
+function drawHatchedCircle(x,y,r){
+  ctx.save(); ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.clip();
+  ctx.fillStyle='#fff'; ctx.fillRect(x-r,y-r,2*r,2*r);
+  ctx.strokeStyle='#aaa'; ctx.lineWidth=1; ctx.setLineDash([5,3]);
+  for(let yy=y-r*2; yy<y+r*2; yy+=6){ctx.beginPath();ctx.moveTo(x-r*2,yy);ctx.lineTo(x+r*2,yy+r*2);ctx.stroke();}
+  ctx.setLineDash([]); ctx.restore();
+  ctx.strokeStyle='#444'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.stroke();
+}
+/* Node shapes */
+function drawSquare(x,y,r,fill,stroke='#000',w=1){ctx.fillStyle=fill;ctx.strokeStyle=stroke;ctx.lineWidth=w;ctx.beginPath();ctx.rect(x-r,y-r,2*r,2*r);ctx.fill();ctx.stroke();}
+function drawTriangle(x,y,r,fill,stroke='#000',w=1){
+  ctx.fillStyle=fill;ctx.strokeStyle=stroke;ctx.lineWidth=w;
+  ctx.beginPath();ctx.moveTo(x, y-r);ctx.lineTo(x+r*0.866,y+r*0.5);ctx.lineTo(x-r*0.866,y+r*0.5);ctx.closePath();ctx.fill();ctx.stroke();
+}
+function drawDiamond(x,y,r,fill,stroke='#000',w=1){
+  ctx.fillStyle=fill;ctx.strokeStyle=stroke;ctx.lineWidth=w;
+  ctx.beginPath();ctx.moveTo(x, y-r);ctx.lineTo(x+r, y);ctx.lineTo(x, y+r);ctx.lineTo(x-r,y);ctx.closePath();ctx.fill();ctx.stroke();
+}
+function drawHex(x,y,r,fill,stroke='#000',w=1){
+  ctx.fillStyle=fill;ctx.strokeStyle=stroke;ctx.lineWidth=w;
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const a=Math.PI/3*i- Math.PI/6;
+    const px=x+r*Math.cos(a), py=y+r*Math.sin(a);
+    if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.closePath();ctx.fill();ctx.stroke();
+}
+
+/* ========= Chip-firing ========= */
+const ChipScene=(()=>{
+  const EDGE_CLR='rgba(0,0,0,.22)', WARM_CLR='#ff7f00', TEXT_CLR='#000', NODE_R=12;
+  let STEP_DELAY=350, PARTICLE_DUR=420;
+  let nodes, edges, adj, deg, chips, sink, unstable=[], particles=[], lastStep=0, idle=0, paused=false;
+
+  function chipColor(c){const t=Math.min(c/8,1);return `rgb(255,${Math.round((1-t)*255+t*127)},${Math.round((1-t)*255)})`;}
+  function init(){
+    const g=buildPlanarGraph(SETTINGS.N); nodes=g.nodes; edges=g.edges.map(e=>({...e,heat:0})); adj=g.adj;
+    deg=adj.map(a=>a.length); sink=deg.indexOf(Math.min(...deg));
+    chips=Array(nodes.length).fill(0); for(let i=0;i<nodes.length;i++) if(i!==sink) chips[i]=randInt(0,deg[i]*2);
+    particles.length=0; unstable.length=0; lastStep=performance.now(); idle=0;
+    document.body.style.background='#fff';
+  }
+  function getE(u,v){return edges.find(e=>(e.u===u&&e.v===v)||(e.u===v&&e.v===u));}
+  function findUnstable(){unstable.length=0; for(let i=0;i<nodes.length;i++) if(i!==sink && chips[i]>=deg[i]) unstable.push(i);}
+  function fire(){
+    const now=performance.now();
+    for(const v of unstable){
+      chips[v]-=deg[v]; nodes[v].pulse=1;
+      for(const u of adj[v]){
+        particles.push({from:v,to:u,t:0,born:now,dur:PARTICLE_DUR/SETTINGS.speed,col:WARM_CLR});
+        const e=getE(v,u); if(e) e.heat=1;
+      }
+    }
+  }
+  function moveParticles(now){
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i]; p.t=Math.min(1,(now-p.born)/p.dur);
+      if(p.t>=1){ if(p.to!==sink) chips[p.to]+=1; particles.splice(i,1); }
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // edges curved
+    for(const e of edges){
+      drawBezierEdge(nodes[e.u],nodes[e.v],EDGE_CLR,1,2);
+      if(e.heat>0.01){
+        const grad=ctx.createLinearGradient(nodes[e.u].x,nodes[e.u].y,nodes[e.v].x,nodes[e.v].y);
+        grad.addColorStop(0,'rgba(0,0,0,0)');grad.addColorStop(0.5,WARM_CLR);grad.addColorStop(1,'rgba(0,0,0,0)');
+        drawBezierEdge(nodes[e.u],nodes[e.v],grad,Math.min(0.7,e.heat),4); e.heat*=SETTINGS.heatDecay;
+      } else e.heat=0;
+    }
+    // particles
+    for(const p of particles){
+      const a=nodes[p.from], b=nodes[p.to], pos=bezierPoint(a,b,p.t);
+      ctx.fillStyle=p.col; ctx.beginPath(); ctx.arc(pos.x,pos.y,4,0,Math.PI*2); ctx.fill();
+    }
+    // nodes circles / sink hatched
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.font='12px "Courier New",monospace';
+    for(let i=0;i<nodes.length;i++){
+      const n=nodes[i], r=n.pulse?NODE_R+4*n.pulse:NODE_R; if(n.pulse)n.pulse=Math.max(0,n.pulse-0.07);
+      if(i===sink) drawHatchedCircle(n.x,n.y,r);
+      else{
+        ctx.save(); ctx.shadowColor='rgba(0,0,0,.2)'; ctx.shadowBlur=8;
+        ctx.fillStyle=chipColor(chips[i]); ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2); ctx.fill(); ctx.restore();
+        ctx.fillStyle=TEXT_CLR; ctx.fillText(String(chips[i]), n.x, n.y-r-10);
+      }
+    }
+    hud.textContent=`Chip | unstable:${unstable.length} particles:${particles.length} | 1-5 switch R reseed Space pause H panel`;
+  }
+  function update(ts){
+    if(paused) return;
+    moveParticles(ts);
+    if(!particles.length && ts-lastStep>(STEP_DELAY/SETTINGS.speed)){
+      findUnstable();
+      if(unstable.length){fire(); lastStep=ts; idle=0;}
+      else if(SETTINGS.chipAutoKick){ if(++idle>80){const v=randInt(0,nodes.length-1); if(v!==sink) chips[v]+=2; idle=0;}}
+    }
+  }
+  return {init,update,draw,pause:p=>paused=p,reseed:init};
+})();
+
+/* ========= Wilson Tree (dark, squares, straight edges) ========= */
+const TreeScene=(()=>{
+  const NODE_R=9, EDGE_CLR='rgba(255,255,255,.15)', TREE_CLR='#66ff33', WALK_CLR='#ff00ff';
+  let STEP=100, nodes,edges,adj,inTree=[],walkerPath=[],visited,root,remaining,currentStart,walkerAt,lastStep=0,paused=false;
+  function init(){
+    const g=buildPlanarGraph(SETTINGS.N,80);
+    nodes=g.nodes; edges=g.edges; adj=g.adj;
+    inTree=[]; walkerPath=[]; visited=new Set(); root=randInt(0,nodes.length-1);
+    visited.add(root); remaining=new Set([...Array(nodes.length).keys()].filter(i=>i!==root));
+    currentStart=null; walkerAt=null; lastStep=performance.now();
+    document.body.style.background='#111';
+  }
+  function startWalk(){currentStart=[...remaining][Math.floor(Math.random()*remaining.size)]; walkerPath=[currentStart]; walkerAt=currentStart;}
+  function step(){
+    if(currentStart==null){ if(remaining.size===0)return; startWalk(); return; }
+    const neigh=adj[walkerAt]; walkerAt=neigh[randInt(0,neigh.length-1)];
+    const idx=walkerPath.indexOf(walkerAt);
+    if(idx>=0) walkerPath=walkerPath.slice(0,idx+1); else walkerPath.push(walkerAt);
+    if(visited.has(walkerAt)){
+      for(let i=0;i<walkerPath.length-1;i++){const u=walkerPath[i],v=walkerPath[i+1]; inTree.push({u,v,alpha:0}); visited.add(u); remaining.delete(u);}
+      remaining.delete(walkerAt); currentStart=null; walkerPath=[];
+    }
+  }
+  function update(ts){
+    if(paused) return;
+    if(remaining.size===0) return;
+    if(ts-lastStep>(STEP/SETTINGS.speed)){step(); lastStep=ts;}
+    inTree.forEach(e=>{if(e.alpha<1)e.alpha+=0.05;});
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // dark overlay
+    ctx.fillStyle='#111'; ctx.fillRect(0,0,W,H);
+    // base edges straight thin white
+    edges.forEach(e=>drawLine(nodes[e.u],nodes[e.v],'rgba(255,255,255,.1)',1,1));
+    // tree edges neon green
+    inTree.forEach(e=>drawLine(nodes[e.u],nodes[e.v],TREE_CLR,e.alpha,3));
+    // walker path magenta polyline
+    if(walkerPath.length>1){
+      ctx.strokeStyle=WALK_CLR; ctx.globalAlpha=0.9; ctx.lineWidth=2.5; ctx.beginPath();
+      ctx.moveTo(nodes[walkerPath[0]].x,nodes[walkerPath[0]].y);
+      for(let i=1;i<walkerPath.length;i++){const p=nodes[walkerPath[i]]; ctx.lineTo(p.x,p.y);}
+      ctx.stroke(); ctx.globalAlpha=1;
+    }
+    // nodes squares
+    for(let i=0;i<nodes.length;i++){
+      const n=nodes[i]; const fill=visited.has(i)?'#66ff33':'#222';
+      drawSquare(n.x,n.y,NODE_R,fill,'#fff',visited.has(i)?1.2:0.6);
+      if(i===root){ctx.strokeStyle='#ff7f00';ctx.lineWidth=2;ctx.beginPath();ctx.arc(n.x,n.y,NODE_R+5,0,Math.PI*2);ctx.stroke();}
+    }
+    hud.textContent=`Wilson Tree | left:${remaining.size} | 1-5 switch R reseed Space pause H panel`;
+  }
+  return {init,update,draw,pause:p=>paused=p,reseed:init};
+})();
+
+/* ========= Kruskal (cream bg, dashed, triangles) ========= */
+const MSTScene=(()=>{
+  const NODE_R=9, BASE='#666', OK='#00a0ff', REJ='#ff0040', CURR='#aa00ff';
+  let STEP=120,nodes,edges,adj,sorted,idx,mst,rej,paused=false,uf=[],showBar=true;
+  function find(x){while(uf[x]!==x)x=uf[x]=uf[uf[x]];return x;}
+  function unite(a,b){a=find(a);b=find(b);if(a===b)return false;uf[b]=a;return true;}
+  function init(){
+    const g=buildPlanarGraph(SETTINGS.N,80);
+    nodes=g.nodes; edges=g.edges.map(e=>({...e,w:Math.random()*100})); adj=g.adj;
+    sorted=edges.slice().sort((a,b)=>a.w-b.w); idx=0; mst=[]; rej=[]; uf=[...Array(nodes.length).keys()];
+    document.body.style.background='#f7f3e8';
+  }
+  function update(ts){
+    if(paused||idx>=sorted.length)return;
+    if(!MSTScene._last||ts-MSTScene._last>(STEP/SETTINGS.speed)){
+      const e=sorted[idx++]; if(unite(e.u,e.v)) mst.push({...e,a:0}); else rej.push({...e,a:0});
+      MSTScene._last=ts;
+    }
+    mst.forEach(e=>{if(e.a<1)e.a+=0.05;}); rej.forEach(e=>{if(e.a<0.6)e.a+=0.08;});
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // bars on left
+    if(showBar){
+      const bw=80; ctx.fillStyle='#fff'; ctx.fillRect(0,0,bw,H); ctx.strokeStyle='#000';ctx.strokeRect(0,0,bw,H);
+      for(let i=0;i<sorted.length;i++){
+        const y=10+i*6; ctx.fillStyle=i<idx?'#000':'#bbb'; ctx.fillRect(10,y,60,4);
+      }
+    }
+    // base dashed
+    edges.forEach(e=>drawLine(nodes[e.u],nodes[e.v],'#999',0.25,2,[4,4]));
+    // current
+    if(idx<sorted.length){
+      const e=sorted[idx]; drawLine(nodes[e.u],nodes[e.v],CURR,0.9,3);
+    }
+    // accepted / rejected
+    mst.forEach(e=>drawLine(nodes[e.u],nodes[e.v],OK,e.a,4));
+    rej.forEach(e=>drawLine(nodes[e.u],nodes[e.v],REJ,e.a,3));
+    // weights?
+    if(SETTINGS.showWeights){
+      ctx.font='10px "Courier New",monospace'; ctx.fillStyle='#444'; ctx.textAlign='center';
+      edges.forEach(e=>{const p=bezierPoint(nodes[e.u],nodes[e.v],0.5); ctx.fillText(e.w.toFixed(1),p.x+6,p.y-6);});
+    }
+    // triangle nodes
+    nodes.forEach(n=>drawTriangle(n.x,n.y,NODE_R,'#fff','#000',1));
+    hud.textContent=`Kruskal | ${mst.length}/${nodes.length-1} | 1-5 switch R reseed Space pause H panel`;
+  }
+  return {init,update,draw,pause:p=>paused=p,reseed:init,_last:0};
+})();
+
+/* ========= Prim (radial, diamonds, dashed frontier) ========= */
+const PrimScene=(()=>{
+  const NODE_R=9, BASE='#bbb', TREE='#0055ff', FRONT='#ff7f00', PICK='#aa00ff';
+  let STEP=140, nodes,edges,adj,w,inTree,frontier,chosen,rootAngle=0,paused=false,lastStep=0;
+  function init(){
+    // radial layout
+    const N=SETTINGS.N;
+    nodes=[];
+    const R=Math.min(W,H)*0.32;
+    const cx=W/2, cy=H/2;
+    for(let i=0;i<N;i++){
+      const ang=2*Math.PI*i/N;
+      nodes.push({x:cx+R*Math.cos(ang), y:cy+R*Math.sin(ang)});
+    }
+    // fully connect to ensure MST interest? Keep planar to be consistent:
+    const g=buildPlanarGraph(N,80); edges=g.edges; adj=g.adj;
+    w=edges.map(()=>Math.random()*100);
+    inTree=new Set(); frontier=[]; chosen=[];
+    const root=randInt(0,N-1); inTree.add(root); addFront(root);
+    document.body.style.background='#fff';
+  }
+  function addFront(v){
+    for(const u of adj[v]){
+      if(inTree.has(u))continue;
+      const idx=edges.findIndex(e=>(e.u===v&&e.v===u)||(e.u===u&&e.v===v));
+      frontier.push({idx,u,v,w:w[idx]});
+    }
+  }
+  function update(ts){
+    if(paused) return;
+    rootAngle+=0.01*SETTINGS.speed;
+    if(frontier.length===0) return;
+    if(ts-lastStep>(STEP/SETTINGS.speed)){
+      frontier.sort((a,b)=>a.w-b.w);
+      const pick=frontier.shift(); chosen.push({idx:pick.idx,a:0});
+      const newV = inTree.has(pick.u)?pick.v:pick.u;
+      inTree.add(newV);
+      frontier = frontier.filter(f=>!(inTree.has(f.u)&&inTree.has(f.v)));
+      addFront(newV);
+      lastStep=ts;
+    }
+    chosen.forEach(e=>{if(e.a<1)e.a+=0.05;});
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    edges.forEach((e,i)=>{drawLine(nodes[e.u],nodes[e.v],BASE,0.25,2); if(SETTINGS.showWeights){const p=bezierPoint(nodes[e.u],nodes[e.v],0.5);ctx.fillStyle='#666';ctx.font='9px "Courier New"';ctx.textAlign='center';ctx.fillText(w[i].toFixed(1),p.x+6,p.y-6);} });
+    frontier.forEach(f=>drawLine(nodes[edges[f.idx].u],nodes[edges[f.idx].v],FRONT,0.6,2,[3,3]));
+    chosen.forEach(e=>drawLine(nodes[edges[e.idx].u],nodes[edges[e.idx].v],TREE,e.a,4));
+    if(frontier.length){
+      const f=frontier.slice().sort((a,b)=>a.w-b.w)[0];
+      drawLine(nodes[edges[f.idx].u],nodes[edges[f.idx].v],PICK,0.9,4);
+    }
+    // diamond nodes, root halo rotates
+    const root=[...inTree][0];
+    for(let i=0;i<nodes.length;i++){
+      const n=nodes[i];
+      drawDiamond(n.x,n.y,NODE_R, inTree.has(i)?'#0055ff':'#fff','#000',1);
+      if(i===root){
+        ctx.save(); ctx.translate(n.x,n.y); ctx.rotate(rootAngle);
+        ctx.strokeStyle='#ff7f00'; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.rect(-NODE_R-5,-NODE_R-5,2*(NODE_R+5),2*(NODE_R+5));
+        ctx.stroke(); ctx.restore();
+      }
+    }
+    hud.textContent=`Prim | in:${inTree.size}/${nodes.length} | 1-5 switch R reseed Space pause H panel`;
+  }
+  return {init,update,draw,pause:p=>paused=p,reseed:init};
+})();
+
+/* ========= BFS (black bg, hex, rings) ========= */
+const BFSScene=(()=>{
+  const NODE_R=10, EDGE_CLR='rgba(255,255,255,.18)', TREE_CLR='#00ff99', RING_CLR='#4488ff';
+  let STEP=120, nodes,edges,adj,root,dist=[],parent=[],q=[],idx=0,paused=false,ringT=0;
+  function init(){
+    const g=buildPlanarGraph(SETTINGS.N,80); nodes=g.nodes; edges=g.edges; adj=g.adj;
+    root=randInt(0,nodes.length-1); dist=new Array(nodes.length).fill(-1); parent=new Array(nodes.length).fill(-1);
+    q=[root]; dist[root]=0; idx=0; ringT=0;
+    document.body.style.background='#000';
+  }
+  function update(ts){
+    if(paused)return;
+    ringT+=0.015*SETTINGS.speed;
+    if(idx>=q.length)return;
+    if(!BFSScene._last||ts-BFSScene._last>(STEP/SETTINGS.speed)){
+      const v=q[idx++]; for(const u of adj[v]) if(dist[u]===-1){dist[u]=dist[v]+1; parent[u]=v; q.push(u);}
+      BFSScene._last=ts;
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // black bg fill (ensure)
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    // edges thin white
+    edges.forEach(e=>drawLine(nodes[e.u],nodes[e.v],EDGE_CLR,1,1));
+    // tree edges neon
+    for(let v=0;v<nodes.length;v++) if(parent[v]!==-1) drawLine(nodes[v],nodes[parent[v]],TREE_CLR,0.8,2.5);
+    // wave rings
+    const maxd=Math.max(...dist);
+    for(let i=0;i<nodes.length;i++){
+      const d=dist[i]; if(d<0) continue;
+      const n=nodes[i];
+      const r=NODE_R+8*Math.sin(ringT-d*0.4);
+      drawHex(n.x,n.y,NODE_R,(d===0?'#ff7f00':`hsl(${220-180*(d/(maxd||1))},70%,55%)`),'#fff',0.8);
+      ctx.strokeStyle=RING_CLR; ctx.globalAlpha=0.15; ctx.beginPath(); ctx.arc(n.x,n.y,r*2.5,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1;
+    }
+    hud.textContent=`BFS | visited:${idx}/${nodes.length} | 1-5 switch R reseed Space pause H panel`;
+  }
+  return {init,update,draw,pause:p=>paused=p,reseed:init,_last:0};
+})();
+
+/* ========= MANAGER ========= */
+const scenes={chip:ChipScene, tree:TreeScene, mst:MSTScene, prim:PrimScene, bfs:BFSScene};
+let current='chip', paused=false;
+scenes[current].init();
+
+function switchTo(name){
+  if(name===current) return;
+  scenes[current].pause(true);
+  current=name;
+  scenes[current].init();
+  scenes[current].pause(paused);
+  document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('active',b.dataset.algo===name));
+}
+document.getElementById('menu').addEventListener('click',e=>{
+  if(e.target.tagName==='BUTTON') switchTo(e.target.dataset.algo);
+});
+addEventListener('keydown',e=>{
+  if(e.key==='1') switchTo('chip');
+  if(e.key==='2') switchTo('tree');
+  if(e.key==='3') switchTo('mst');
+  if(e.key==='4') switchTo('prim');
+  if(e.key==='5') switchTo('bfs');
+  if(e.key==='r'||e.key==='R') scenes[current].reseed();
+  if(e.code==='Space'){paused=!paused; scenes[current].pause(paused);}
+});
+
+function loop(ts){scenes[current].update(ts); scenes[current].draw(ts); requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+
+/* back jitter */
+const back=document.getElementById('back'); let t=0;(function jitter(){t++;if(t%180===0){back.style.transform=`translate(${(Math.random()*2-1)*2}px,${(Math.random()*2-1)*2}px)`;setTimeout(()=>back.style.transform='',70);}requestAnimationFrame(jitter);})();
+</script>
+</body>
+</html>
