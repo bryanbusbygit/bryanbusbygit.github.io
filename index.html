@@ -1,282 +1,510 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bryan C. Busby</title>
-<meta name="description" content="Undergraduate mathematician interested in graph theory and combinatorics.">
-<link rel="preload" href="assets/face3.jpg" as="image">
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg-glass:255 255 255 / 0.88;
-  --ink:#000;
-  --shadow:8px 8px 0 #000;
-  --mono:'Courier New',Courier,monospace;
-  --accent-link:#2020ff;
-  --accent-link-hover:#000;
-  --code-bg:#111;
-  --code-fg:#f5f5f5;
-  --bg-overlay-top:rgba(0,0,0,.10);
-  --bg-overlay-bottom:rgba(0,0,0,.10);
-}
-html{scroll-behavior:smooth;}
-body{
-  --bg-img:url('assets/view1.jpg');
-  font-family:var(--mono);
-  color:var(--ink);
-  line-height:1.45;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  padding:48px 0 64px;
-  background:linear-gradient(var(--bg-overlay-top),var(--bg-overlay-bottom)), var(--bg-img) center/cover no-repeat fixed;
-  background-attachment:fixed;
-  background-position:center;
-  background-size:cover;
-  -webkit-font-smoothing:antialiased;
-  position:relative;
-}
-.container{
-  width:clamp(320px,72ch,1000px);
-  margin-inline:auto;
-  background:rgba(var(--bg-glass));
-  border:4px solid #000;
-  box-shadow:var(--shadow);
-  padding:clamp(24px,4vw,40px) clamp(22px,4vw,42px) clamp(40px,6vw,60px);
-  position:relative;
-  backdrop-filter:blur(4px);
-}
-header{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;margin-bottom:24px;}
-header h1{font-size:2.15rem;letter-spacing:.5px;margin-bottom:6px;}
-.subtitle{font-size:.9rem;text-transform:uppercase;letter-spacing:2px;font-weight:bold;}
-.iff-symbol{display:inline-block;font-size:1.45em;line-height:0.9;transform:translateY(2px);}
-.institution{font-size:.7rem;letter-spacing:1px;text-transform:uppercase;margin-top:4px;display:block;}
-header img.profile{
-  width:150px;height:150px;object-fit:cover;
-  border:3px solid #000;box-shadow:4px 4px 0 #000;
-  transition:transform .25s cubic-bezier(.66,.04,.3,1), box-shadow .25s;
-  cursor:pointer;
-}
-@media (hover:hover){
-  header img.profile:hover,header img.profile:focus-visible{transform:scale(1.04);box-shadow:6px 6px 0 #000;outline:none;}
-}
-nav{display:flex;gap:20px;flex-wrap:wrap;font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:6px;}
-nav a{color:var(--accent-link);text-decoration:none;position:relative;padding:4px 2px;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 4px,rgba(0,0,0,.05) 4px 5px);background-size:100% 9px;animation:scan 12s linear infinite;}
-nav a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:#000;transition:width .28s cubic-bezier(.66,.04,.3,1), background-color .3s;}
-nav a:hover::after,nav a:focus-visible::after{width:100%;background:var(--accent-link-hover);}
-@keyframes scan{0%{background-position:0 0;}100%{background-position:0 9px;}}
-section{margin-bottom:34px;}
-section:last-of-type{margin-bottom:10px;}
-section h2{font-size:1.35rem;margin-bottom:10px;border-bottom:2px solid #000;padding-bottom:4px;position:relative;}
-section h2::before{content:"§";font-size:.9rem;position:absolute;left:-20px;top:4px;opacity:.6;}
-section p,section ul,section ol{font-size:.92rem;margin-top:10px;}
-section ul{list-style:disc;padding-left:20px;}
-.highlight-list li{padding:.25rem 0;}
-.grid-two{display:grid;gap:10px 26px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));}
-.pub{font-size:.85rem;line-height:1.35;margin-bottom:10px;}
-.badge{display:inline-block;background:#000;color:#fff;font-size:.65rem;padding:2px 6px 3px;letter-spacing:1px;margin-left:6px;}
-.button{display:inline-block;background:#000;color:#fff;padding:8px 14px;font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;box-shadow:4px 4px 0 #000;}
-.button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #000;}
-.button:hover{background:#111;}
-.contact-list{list-style:none;display:flex;flex-wrap:wrap;gap:14px 30px;font-size:.85rem;padding-left:0;}
-.contact-list a{text-decoration:none;color:var(--accent-link);font-weight:700;border-bottom:1px dotted #000;}
-.contact-list a:hover{border-bottom:1px solid #000;}
-code,pre{font-family:var(--mono);background:var(--code-bg);color:var(--code-fg);font-size:.8rem;}
-code{padding:2px 4px;border-radius:3px;}
-pre{padding:10px 14px;overflow:auto;border:2px solid #000;box-shadow:4px 4px 0 #000;margin-top:12px;}
-.small{font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:#222;}
-.muted{color:#333;}
-footer{text-align:center;font-size:.7rem;border-top:2px solid #000;padding-top:12px;margin-top:18px;letter-spacing:1px;opacity:.9;}
-footer a{color:var(--accent-link);text-decoration:none;}
-footer a:hover{text-decoration:underline;}
-/* Modal */
-#tutor-modal{
-  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.55);z-index:9999;
-}
-#tutor-dialog{
-  width:clamp(320px,90vw,720px);
-  max-height:90vh;overflow:auto;
-  background:rgba(var(--bg-glass));
-  border:4px solid #000;box-shadow:var(--shadow);
-  padding:26px 26px 34px;position:relative;
-}
-#tutor-close{
-  position:absolute;top:8px;right:10px;
-  background:#000;color:#fff;border:none;
-  font-family:var(--mono);font-size:.75rem;padding:4px 8px;cursor:pointer;
-}
-#tutor-dialog h2{font-size:1.25rem;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:4px;}
-#tutor-dialog h3{font-size:1rem;margin-top:18px;border-bottom:1px solid #000;padding-bottom:3px;}
-#tutoring-form input,#tutoring-form textarea{
-  font-family:var(--mono);background:#fff;width:100%;
-  padding:6px;border:2px solid #000;margin:6px 0;
-}
-#tutoring-form input:focus,#tutoring-form textarea:focus{outline:2px solid var(--accent-link);}
-@media (max-width:720px){
-  header img.profile{order:-1;width:120px;height:120px;}
-  header{justify-content:center;text-align:center;}
-  nav{justify-content:center;}
-  section h2::before{left:-14px;}
-  .container{padding:32px 20px 50px;}
-}
-@media (prefers-reduced-motion: reduce){
-  nav a{animation:none;}
-  header img.profile:hover,header img.profile:focus-visible{transform:none;box-shadow:4px 4px 0 #000;}
-}
-</style>
-</head>
-<body>
-<main class="container" id="top">
-  <header>
-    <div>
-      <h1>Bryan C. Busby</h1>
-      <div class="subtitle">Mathematics <span class="iff-symbol">⇔</span> Beauty.</div>
-      <span class="institution">University of Puerto Rico</span>
-      <nav aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#research">Research</a>
-        <a href="#publications">Papers</a>
-        <a href="#cv">CV</a>
-        <a href="#connect">Connect</a>
-        <a href="updates.html">Updates</a>
-      </nav>
-    </div>
-    <img src="assets/face3.jpg" alt="Portrait of Bryan Busby" class="profile" id="tutor-trigger">
-  </header>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Bryan C. Busby</title>
+  <meta name="description" content="Undergraduate mathematician interested in graph theory and combinatorics.">
+  <link rel="preload" href="assets/black.gif" as="image">
 
-  <section id="about">
-    <h2>About</h2>
-    <p>I am currently an undergraduate at the University of Puerto Rico, Mayagüez. My interests lie in graph theory and combinatorics. I am actively seeking research opportunities to connect with other mathematicians. I enjoy creating content that makes advanced topics accessible to beginners (see updates).</p>
-  </section>
+  <style>
+  *{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+  }
+  :root{
+    --bg-glass:255 255 255 / 0.88;
+    --ink:#000;
+    --mono:'Monaco',Monaco,Monaco;
+    --accent-link:#000;
+    --accent-link-hover:#000;
+    --code-bg:#111;
+    --code-fg:#f5f5f5;
+    --bg-overlay-top:rgba(0,0,0,.10);
+    --bg-overlay-bottom:rgba(0,0,0,.10);
 
-  <section id="research">
-    <h2>Research</h2>
-    <ul class="highlight-list">
-      <li><strong>2025</strong> – Arithmetical Structures on Graphs (Enumerative Combinatorics) with A. Díaz-López.</li>
-      <li><strong>2024</strong> – Discrete Dynamical Systems (Algebraic Dynamics) with O. Colón-Reyes.</li>
-      <li><strong>2023</strong> – 5G RF Propagation Measurements with GNU Radio (Debugging Hardware) with R.A. Rodríguez-Solís.</li>
-      <li><strong>2021</strong> – Adjacency Matrices & Walks (Graph Theory) with E. Benvenutti.</li>
-    </ul>
-  </section>
+    --space-xs:4px;
+    --space-sm:8px;
+    --space-md:12px;
+    --space-lg:20px;
+    --space-xl:32px;
+  }
 
-  <section id="publications">
-    <h2>Papers</h2>
-    <div class="grid-two">
-      <div class="pub">
-        <b>Transient Length Boundary for Monomial Dynamical Systems</b> (with O. Colón-Reyes)
-        <span class="badge">In prep</span><br>
-        <span class="muted small">Derived bounds on system transients via cycle decomposition of the dependency graph and analysis of the induced Frobenius problem from cycle lengths.</span>
-      </div>
-      <div class="pub">
-        <b>Arithmetical Structures on Cycles with a Multi-Edge</b> (with A. Díaz-López)
-        <span class="badge">In prep</span><br>
-        <span class="muted small">Applied the Euclidean algorithm to generate strongly smooth arithmetical structures on cycles with a multi-edge.</span>
-      </div>
-    </div>
-  </section>
+  html{
+    scroll-behavior:smooth;
+    height:100%;
+  }
+  body{
+    --bg-img:url('assets/view3.jpg');
+    font-family:var(--mono);
+    color:var(--ink);
+    line-height:1.5;
+    height:100%;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:var(--space-xl);
+    background:
+      linear-gradient(var(--bg-overlay-top),var(--bg-overlay-bottom)),
+      var(--bg-img) center/cover no-repeat fixed;
+    background-attachment:fixed;
+    background-position:center;
+    background-size:cover;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+    overflow:hidden;
+  }
 
-  <section id="cv">
-    <h2>CV</h2>
-    <p><a class="button" href="assets/Bryan_Busby_CV.pdf" target="_blank" rel="noopener">Download CV</a></p>
-    <p class="small muted">Last updated: July 2025.</p>
-  </section>
+  .container{
+    width:900px;
+    height:700px;
+    margin-inline:auto;
+    background:rgba(var(--bg-glass));
+    border:5px solid #000;
+    box-shadow:none;
+    padding:var(--space-lg) var(--space-xl) var(--space-lg);
+    position:relative;
+    backdrop-filter:blur(3px);
+    display:flex;
+    flex-direction:column;
+  }
 
-  <section id="connect">
-    <h2>Connect</h2>
-    <ul class="contact-list">
-      <li><a href="mailto:brybusby@upr.edu" aria-label="Email">Email</a></li>
-      <li><a href="https://twitter.com/brybusby" target="_blank" rel="noopener">Twitter</a></li>
-    </ul>
-  </section>
+  header{
+    display:flex;
+    justify-content:space-between;
+    gap:var(--space-lg);
+    flex-wrap:wrap;
+    margin-bottom:var(--space-md);
+  }
+  header h1{
+    font-size:2.15rem;
+    letter-spacing:.5px;
+    margin-bottom:var(--space-xs);
+  }
+  .subtitle{
+    font-size:.9rem;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    font-weight:bold;
+    margin-bottom:var(--space-xs);
+  }
+  .institution{
+    font-size:.7rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-top:var(--space-xs);
+    display:block;
+  }
 
-  <footer>
-    &copy; 2025 Bryan C. Busby · All rights reserved · Built with plain HTML & CSS ·
-    <a href="#top">Back to Top</a>
-  </footer>
-</main>
-
-<!-- Tutoring Modal -->
-<div id="tutor-modal" aria-hidden="true">
-  <div id="tutor-dialog" role="dialog" aria-modal="true" aria-labelledby="tutor-title">
-    <button id="tutor-close" aria-label="Close tutoring form">✕</button>
-    <h2 id="tutor-title">Tutoring</h2>
-    <p>I do 1-on-1 / small-group math tutoring (HS → early grad). Graph theory, combinatorics, discrete math, calc, linear algebra, proof writing. Sessions are problem-driven and full of examples.</p>
-    <ul class="highlight-list">
-      <li><b>Rate:</b> First 25-minute session $0. Then $40/hr.</li>
-      <li><b>Format:</b> Video call (screenshare my iPad) or in-person in Puerto Rico, at Mayagüez.</li>
-    </ul>
-
-    <h3>Request</h3>
-    <form id="tutoring-form" action="https://formspree.io/f/yourID" method="POST">
-      <label class="small" for="name">Name*</label><br>
-      <input type="text" id="name" name="name" required>
-
-      <label class="small" for="email">Email*</label><br>
-      <input type="email" id="email" name="_replyto" required>
-
-      <label class="small" for="phone">Phone (optional)</label><br>
-      <input type="tel" id="phone" name="phone" pattern="[0-9+()\-\\s]*">
-
-      <input type="text" name="_gotcha" style="display:none">
-
-      <button type="submit" class="button" style="margin-top:10px;">Send</button>
-      <div id="form-status" class="small muted" style="margin-top:8px;"></div>
-    </form>
-  </div>
-</div>
-
-<script>
-/* Modal logic */
-const trigger = document.getElementById('tutor-trigger');
-const modal   = document.getElementById('tutor-modal');
-const dialog  = document.getElementById('tutor-dialog');
-const closeBtn= document.getElementById('tutor-close');
-let lastFocus = null;
-
-function openModal(){
-  lastFocus = document.activeElement;
-  modal.style.display = 'flex';
-  modal.setAttribute('aria-hidden','false');
-  dialog.focus();
-}
-function closeModal(){
-  modal.style.display = 'none';
-  modal.setAttribute('aria-hidden','true');
-  if(lastFocus) lastFocus.focus();
-}
-trigger.addEventListener('click',openModal);
-trigger.addEventListener('keydown',e=>{
-  if(e.key==='Enter' || e.key===' '){ e.preventDefault(); openModal(); }
-});
-closeBtn.addEventListener('click',closeModal);
-modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape' && modal.style.display==='flex') closeModal();
-});
-
-/* Tutoring form handler */
-const form = document.getElementById('tutoring-form');
-const statusEl = document.getElementById('form-status');
-if(form){
-  form.addEventListener('submit', async e=>{
-    e.preventDefault();
-    statusEl.textContent = 'Sending...';
-    const data = new FormData(form);
-    try{
-      const res = await fetch(form.action, {method:'POST', body:data, headers:{'Accept':'application/json'}});
-      if(res.ok){
-        form.reset();
-        statusEl.textContent = 'Thanks! I’ll reply within 24 hours.';
-      }else{
-        statusEl.textContent = 'Error. Email me directly: brybusby@upr.edu';
-      }
-    }catch(_){
-      statusEl.textContent = 'Network error. Email me directly.';
+  header img.profile{
+    width:150px;
+    height:150px;
+    object-fit:cover;
+    border:none;
+    box-shadow:none;
+    transition:transform .25s cubic-bezier(.66,.04,.3,1);
+  }
+  @media (hover:hover){
+    header img.profile:hover,
+    header img.profile:focus-visible{
+      transform:scale(1.04);
+      outline:none;
     }
+  }
+
+  nav{
+    display:flex;
+    gap:var(--space-md);
+    flex-wrap:wrap;
+    font-size:.78rem;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-top:var(--space-sm);
+  }
+  nav a{
+    color:var(--accent-link);
+    text-decoration:none;
+    position:relative;
+    padding:4px 2px;
+    background:repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0) 0 4px,
+      rgba(0,0,0,.05) 4px 5px
+    );
+    background-size:100% 9px;
+    animation:scan 12s linear infinite;
+  }
+  nav a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:0;
+    height:2px;
+    width:0;
+    background:#000;
+    transition:width .28s cubic-bezier(.66,.04,.3,1),
+               background-color .3s;
+  }
+  nav a:hover::after,
+  nav a:focus-visible::after{
+    width:100%;
+    background:var(--accent-link-hover);
+  }
+  nav a.nav-active{
+    color:var(--accent-link-hover);
+  }
+  nav a.nav-active::after{
+    width:100%;
+    background:var(--accent-link-hover);
+  }
+  @keyframes scan{
+    0%{background-position:0 0;}
+    100%{background-position:0 9px;}
+  }
+
+  .content-wrapper{
+    flex:1 1 auto;
+    margin-top:var(--space-md);
+    margin-bottom:var(--space-md);
+    overflow:auto;
+    padding-right:6px;
+  }
+
+  .content-section{
+    display:none;
+  }
+  .content-section.active{
+    display:block;
+  }
+
+  section h2{
+    font-size:1.35rem;
+    margin-bottom:var(--space-sm);
+    border-bottom:2px solid #000;
+    padding-bottom:var(--space-xs);
+    position:relative;
+  }
+  section h2::before{
+    content:"§";
+    font-size:.9rem;
+    position:absolute;
+    left:-20px;
+    top:4px;
+    opacity:.6;
+  }
+  section p,
+  section ul,
+  section ol{
+    font-size:.92rem;
+    margin-top:var(--space-sm);
+  }
+  section ul{
+    list-style:disc;
+    padding-left:20px;
+  }
+  .highlight-list li{
+    padding:6px 0;
+  }
+
+  .home-intro{
+    max-width:36rem;
+  }
+
+  .grid-two{
+    display:grid;
+    gap:var(--space-md) var(--space-xl);
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  }
+  .pub{
+    font-size:.85rem;
+    line-height:1.4;
+    margin-bottom:var(--space-md);
+  }
+  .badge{
+    display:inline-block;
+    background:#000;
+    color:#fff;
+    font-size:.65rem;
+    padding:2px 6px 3px;
+    letter-spacing:1px;
+    margin-left:6px;
+  }
+
+  .button{
+    display:inline-block;
+    background:#000;
+    color:#fff;
+    padding:8px 14px;
+    font-size:.75rem;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    text-decoration:none;
+    box-shadow:4px 4px 0 #000;
+    margin-top:var(--space-sm);
+  }
+  .button:active{
+    transform:translate(2px,2px);
+    box-shadow:2px 2px 0 #000;
+  }
+  .button:hover{
+    background:#111;
+  }
+
+  .contact-list{
+    list-style:none;
+    display:flex;
+    flex-wrap:wrap;
+    gap:var(--space-sm) var(--space-xl);
+    font-size:.85rem;
+    padding-left:0;
+    margin-top:var(--space-sm);
+  }
+  .contact-list a{
+    text-decoration:none;
+    color:var(--accent-link);
+    font-weight:700;
+    border-bottom:1px dotted #000;
+  }
+  .contact-list a:hover{
+    border-bottom:1px solid #000;
+  }
+
+  .other-note{
+    margin-top:var(--space-sm);
+  }
+
+  .other-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1.4fr) minmax(0,2fr);
+    gap:var(--space-lg);
+    align-items:flex-start;
+  }
+
+  .now-card{
+    border:2px solid #000;
+    box-shadow:4px 4px 0 #000;
+    padding:var(--space-sm) var(--space-md);
+    background:rgba(255,255,255,0.9);
+    font-size:.85rem;
+  }
+  .now-card h3{
+    font-size:.9rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:var(--space-xs);
+  }
+  .now-card ul{
+    list-style:disc;
+    padding-left:18px;
+    margin-top:var(--space-xs);
+  }
+  .now-card li{
+    margin-bottom:4px;
+  }
+
+  .small{
+    font-size:.7rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:#222;
+  }
+  .muted{
+    color:#333;
+  }
+
+  footer{
+    text-align:center;
+    font-size:.7rem;
+    border-top:2px solid #000;
+    padding-top:var(--space-sm);
+    margin-top:var(--space-md);
+    letter-spacing:1px;
+    opacity:.9;
+    flex-shrink:0;
+  }
+  footer a{
+    color:var(--accent-link);
+    text-decoration:none;
+  }
+  footer a:hover{
+    text-decoration:underline;
+  }
+
+  @media (max-width:940px){
+    body{
+      overflow:auto;
+      align-items:flex-start;
+      padding:16px 8px;
+    }
+    .container{
+      width:100%;
+      max-width:900px;
+      height:auto;
+      min-height:520px;
+      padding:var(--space-lg) var(--space-md);
+    }
+    header{
+      justify-content:center;
+      text-align:center;
+      gap:var(--space-md);
+      margin-bottom:var(--space-md);
+    }
+    header img.profile{
+      order:-1;
+      width:120px;
+      height:120px;
+    }
+    nav{
+      justify-content:center;
+      margin-top:var(--space-sm);
+    }
+    section h2::before{
+      left:-14px;
+    }
+    .other-layout{
+      grid-template-columns:1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    nav a{
+      animation:none;
+    }
+    header img.profile:hover,
+    header img.profile:focus-visible{
+      transform:none;
+    }
+  }
+  </style>
+</head>
+
+<body>
+  <main class="container" id="top">
+    <header>
+      <div>
+        <h1>Bryan C. Busby</h1>
+        <div class="subtitle"></div>
+        <span class="institution">University of Puerto Rico</span>
+
+        <nav aria-label="Primary">
+          <a href="#" class="nav-link nav-active" data-section="home">Home</a>
+          <a href="#" class="nav-link" data-section="research">Research</a>
+          <a href="#" class="nav-link" data-section="manuscripts">Manuscripts</a>
+          <a href="#" class="nav-link" data-section="cv">CV</a>
+          <a href="#" class="nav-link" data-section="other">Other</a>
+        </nav>
+      </div>
+
+      <img src="assets/black.gif" alt="Portrait of Bryan Busby" class="profile">
+    </header>
+
+    <div class="content-wrapper" id="content-wrapper">
+      <section class="content-section active" data-section="home">
+        <h2>Home</h2>
+        <p class="home-intro">
+          An undergraduate at the University of Puerto Rico. Interested in graph theory, dynamics, and combinatorics.
+          This page collects my research projects, manuscripts in preparation, and a few places where I share
+          mathematics online.
+        </p>
+      </section>
+
+      <section class="content-section" data-section="research">
+        <h2>Research</h2>
+        <ul class="highlight-list">
+          <li><strong>2025</strong> – Arithmetical Structures on Graphs (Enumerative Combinatorics) with A. Díaz-López.</li>
+          <li><strong>2024</strong> – Discrete Dynamical Systems (Algebraic Dynamics) with O. Colón-Reyes.</li>
+          <li><strong>2023</strong> – 5G RF Propagation Measurements with GNU Radio (Debugging Hardware) with R.A. Rodríguez-Solís.</li>
+          <li><strong>2021</strong> – Adjacency Matrices &amp; Walks (Graph Theory) with E. Benvenutti.</li>
+        </ul>
+      </section>
+
+      <section class="content-section" data-section="manuscripts">
+        <h2>Manuscripts</h2>
+        <div class="grid-two">
+          <div class="pub">
+            <b>Transient Length Boundary for Monomial Dynamical Systems</b> (with O. Colón-Reyes)
+            <span class="badge">In prep</span><br>
+            <span class="muted small">
+              Derived bounds on system transients via cycle decomposition of the
+              dependency graph and analysis of the induced Frobenius problem from
+              cycle lengths.
+            </span>
+          </div>
+          <div class="pub">
+            <b>Arithmetical Structures on Cycles with a Multi-Edge</b> (with A. Díaz-López)
+            <span class="badge">In prep</span><br>
+            <span class="muted small">
+              Applied the Euclidean algorithm to generate strongly smooth
+              arithmetical structures on cycles with a multi-edge.
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section" data-section="cv">
+        <h2>CV</h2>
+        <p>
+          <a class="button" href="assets/Bryan_Busby_CV.pdf" target="_blank" rel="noopener">
+            Open CV
+          </a>
+        </p>
+        <p class="small muted">Last updated: November 2025.</p>
+      </section>
+
+      <section class="content-section" data-section="other">
+        <h2>Other</h2>
+
+        <div class="other-layout">
+          <div>
+            <ul class="contact-list">
+              <li><a href="mailto:bryan.busby@upr.edu" aria-label="Email">Email</a></li>
+              <li><a href="https://twitter.com/brybusby" target="_blank" rel="noopener">Twitter</a></li>
+              <li><a href="https://www.youtube.com/@busbymath" target="_blank" rel="noopener">YouTube</a></li>
+            </ul>
+            <p class="small muted other-note"></p>
+          </div>
+
+          <aside class="now-card">
+            <h3>Now</h3>
+            <ul>
+              <li>Writing about transient lengths in finite dynamical systems.</li>
+              <li>Studying arithmetical structures on cycles with a multi-edge.</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      &copy; 2025 Bryan C. Busby · All rights reserved · Built with plain HTML &amp; CSS
+    </footer>
+  </main>
+
+  <script>
+  const navLinks = document.querySelectorAll('nav a.nav-link');
+  const sections = document.querySelectorAll('.content-section');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = link.getAttribute('data-section');
+
+      navLinks.forEach(l => l.classList.remove('nav-active'));
+      link.classList.add('nav-active');
+
+      sections.forEach(sec => {
+        if (sec.getAttribute('data-section') === target) {
+          sec.classList.add('active');
+        } else {
+          sec.classList.remove('active');
+        }
+      });
+    });
   });
-}
-</script>
+  </script>
 </body>
 </html>
