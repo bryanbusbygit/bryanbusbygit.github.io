@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- ========================
+       META / HEAD
+  ========================= -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Bryan C. Busby</title>
-  <meta name="description" content="Personal Website.">
-  <link rel="preload" href="assets/black.gif" as="image">
+  <meta name="description" content="Undergraduate mathematician interested in graph theory and combinatorics.">
+  <link rel="preload" href="assets/isomorphisms2.gif" as="image">
 
   <style>
+  /* ========================
+     GLOBAL RESET + ROOT VARS
+  ========================= */
   *{
     box-sizing:border-box;
     margin:0;
@@ -16,7 +22,7 @@
   :root{
     --bg-glass:255 255 255 / 0.88;
     --ink:#000;
-    --mono:'Monaco', Monaco, Monaco;
+    --mono:'Monaco',Monaco,Monaco;
     --accent-link:#000;
     --accent-link-hover:#000;
     --code-bg:#111;
@@ -31,12 +37,15 @@
     --space-xl:32px;
   }
 
+  /* ========================
+     PAGE / BODY BACKGROUND
+  ========================= */
   html{
     scroll-behavior:smooth;
     height:100%;
   }
   body{
-    --bg-img:url('assets/view.jpg');
+    --bg-img:url('assets/view8.jpg');
     font-family:var(--mono);
     color:var(--ink);
     line-height:1.5;
@@ -57,12 +66,15 @@
     overflow:hidden;
   }
 
+  /* ========================
+     MAIN CARD CONTAINER
+  ========================= */
   .container{
     width:900px;
     height:700px;
     margin-inline:auto;
     background:rgba(var(--bg-glass));
-    border:5px solid #000;
+    border:2px solid rgba(0,0,0,1);
     box-shadow:none;
     padding:var(--space-lg) var(--space-xl) var(--space-lg);
     position:relative;
@@ -71,6 +83,9 @@
     flex-direction:column;
   }
 
+  /* ========================
+     HEADER: NAME / TITLE / NAV
+  ========================= */
   header{
     display:flex;
     justify-content:space-between;
@@ -98,6 +113,9 @@
     display:block;
   }
 
+  /* ========================
+     PROFILE IMAGE
+  ========================= */
   header img.profile{
     width:150px;
     height:150px;
@@ -114,6 +132,9 @@
     }
   }
 
+  /* ========================
+     TOP NAVIGATION TABS
+  ========================= */
   nav{
     display:flex;
     gap:var(--space-md);
@@ -165,6 +186,9 @@
     100%{background-position:0 9px;}
   }
 
+  /* ========================
+     MAIN SCROLLABLE CONTENT
+  ========================= */
   .content-wrapper{
     flex:1 1 auto;
     margin-top:var(--space-md);
@@ -173,6 +197,10 @@
     padding-right:6px;
   }
 
+  /* ========================
+     SECTION VISIBILITY TOGGLE
+     (used by JS nav)
+  ========================= */
   .content-section{
     display:none;
   }
@@ -180,6 +208,9 @@
     display:block;
   }
 
+  /* ========================
+     SECTION HEADINGS / TEXT
+  ========================= */
   section h2{
     font-size:1.35rem;
     margin-bottom:var(--space-sm);
@@ -209,10 +240,16 @@
     padding:6px 0;
   }
 
+  /* ========================
+     HOME SECTION HELPERS
+  ========================= */
   .home-intro{
     max-width:36rem;
   }
 
+  /* ========================
+     MANUSCRIPTS GRID / PUBS
+  ========================= */
   .grid-two{
     display:grid;
     gap:var(--space-md) var(--space-xl);
@@ -233,6 +270,9 @@
     margin-left:6px;
   }
 
+  /* ========================
+     BUTTON STYLES (CV LINK)
+  ========================= */
   .button{
     display:inline-block;
     background:#000;
@@ -254,6 +294,9 @@
     background:#111;
   }
 
+  /* ========================
+     CONTACT LINKS (OTHER TAB)
+  ========================= */
   .contact-list{
     list-style:none;
     display:flex;
@@ -277,6 +320,9 @@
     margin-top:var(--space-sm);
   }
 
+  /* ========================
+     OTHER TAB LAYOUT + "NOW"
+  ========================= */
   .other-layout{
     display:grid;
     grid-template-columns:minmax(0,1.4fr) minmax(0,2fr);
@@ -306,6 +352,9 @@
     margin-bottom:4px;
   }
 
+  /* ========================
+     SMALL / MUTED TEXT HELPERS
+  ========================= */
   .small{
     font-size:.7rem;
     letter-spacing:1px;
@@ -316,6 +365,9 @@
     color:#333;
   }
 
+  /* ========================
+     FOOTER
+  ========================= */
   footer{
     text-align:center;
     font-size:.7rem;
@@ -334,6 +386,9 @@
     text-decoration:underline;
   }
 
+  /* ========================
+     RESPONSIVE ADJUSTMENTS
+  ========================= */
   @media (max-width:940px){
     body{
       overflow:auto;
@@ -370,6 +425,9 @@
     }
   }
 
+  /* ========================
+     REDUCED MOTION PREFERENCES
+  ========================= */
   @media (prefers-reduced-motion: reduce){
     nav a{
       animation:none;
@@ -383,13 +441,18 @@
 </head>
 
 <body>
+  <!-- ========================
+       MAIN PAGE STRUCTURE
+  ========================= -->
   <main class="container" id="top">
+    <!-- ===== HEADER: NAME / NAV / PHOTO ===== -->
     <header>
       <div>
         <h1>Bryan C. Busby</h1>
         <div class="subtitle"></div>
         <span class="institution">University of Puerto Rico</span>
 
+        <!-- Primary navigation controlling sections below -->
         <nav aria-label="Primary">
           <a href="#" class="nav-link nav-active" data-section="home">Home</a>
           <a href="#" class="nav-link" data-section="research">Research</a>
@@ -399,10 +462,12 @@
         </nav>
       </div>
 
-      <img src="assets/black.gif" class="profile">
+      <img src="assets/petersen.gif" alt="Portrait of Bryan Busby" class="profile">
     </header>
 
+    <!-- ===== SCROLLABLE CONTENT AREA ===== -->
     <div class="content-wrapper" id="content-wrapper">
+      <!-- ===== SECTION: HOME ===== -->
       <section class="content-section active" data-section="home">
         <h2>Home</h2>
         <p class="home-intro">
@@ -410,18 +475,44 @@
           This page collects my research projects, manuscripts in preparation, and a few places where I share
           mathematics online.
         </p>
+
+        <!-- HOME: brief research focus sentence -->
+        <p class="home-intro">
+          Current work centers on discrete dynamical systems, transient behavior of state graphs,
+          and arithmetical structures on cycles with multi-edges.
+        </p>
       </section>
 
+      <!-- ===== SECTION: RESEARCH SUMMARY ===== -->
       <section class="content-section" data-section="research">
         <h2>Research</h2>
         <ul class="highlight-list">
-          <li><strong>2025</strong> – Arithmetical Structures on Graphs (Enumerative Combinatorics) with A. Díaz-López.</li>
-          <li><strong>2024</strong> – Discrete Dynamical Systems (Algebraic Dynamics) with O. Colón-Reyes.</li>
-          <li><strong>2023</strong> – 5G RF Propagation Measurements with GNU Radio (Debugging Hardware) with R.A. Rodríguez-Solís.</li>
-          <li><strong>2021</strong> – Adjacency Matrices &amp; Walks (Graph Theory) with E. Benvenutti.</li>
+          <li>
+            <strong>2025</strong> – Arithmetical Structures on Graphs (Enumerative Combinatorics) with A. Díaz-López.
+            <br><span class="small">
+              <a href="assets/posters/2025_arithmetical_structures_poster.pdf" target="_blank" rel="noopener">Poster (PDF)</a>
+            </span>
+          </li>
+          <li>
+            <strong>2024</strong> – Discrete Dynamical Systems (Algebraic Dynamics) with O. Colón-Reyes.
+            <br><span class="small">
+              <a href="assets/posters/2024_discrete_dynamical_systems_poster.pdf" target="_blank" rel="noopener">Poster (PDF)</a>
+            </span>
+          </li>
+          <li>
+            <strong>2023</strong> – 5G RF Propagation Measurements with GNU Radio (Debugging Hardware) with R.A. Rodríguez-Solís.
+            <br><span class="small">
+            </span>
+          </li>
+          <li>
+            <strong>2021</strong> – Adjacency Matrices &amp; Walks (Graph Theory) with E. Benvenutti.
+            <br><span class="small">
+            </span>
+          </li>
         </ul>
       </section>
 
+      <!-- ===== SECTION: MANUSCRIPTS ===== -->
       <section class="content-section" data-section="manuscripts">
         <h2>Manuscripts</h2>
         <div class="grid-two">
@@ -445,6 +536,7 @@
         </div>
       </section>
 
+      <!-- ===== SECTION: CV BUTTON ===== -->
       <section class="content-section" data-section="cv">
         <h2>CV</h2>
         <p>
@@ -455,19 +547,23 @@
         <p class="small muted">Last updated: November 2025.</p>
       </section>
 
+      <!-- ===== SECTION: OTHER / CONTACT / NOW ===== -->
       <section class="content-section" data-section="other">
         <h2>Other</h2>
 
         <div class="other-layout">
+          <!-- Contact links + optional note -->
           <div>
             <ul class="contact-list">
               <li><a href="mailto:bryan.busby@upr.edu" aria-label="Email">Email</a></li>
+              <li><a href="https://twitter.com/brybusby" target="_blank" rel="noopener">X</a></li>
               <li><a href="https://www.youtube.com/@busbymath" target="_blank" rel="noopener">YouTube</a></li>
-              <li><a href="https://x.com/brybusby" target="_blank" rel="noopener">X</a></li>
             </ul>
             <p class="small muted other-note"></p>
+            Bits of writing on X. Graph theory videos on YouTube. 
           </div>
 
+          <!-- "Now" card with current focuses -->
           <aside class="now-card">
             <h3>Now</h3>
             <ul>
@@ -478,8 +574,18 @@
         </div>
       </section>
     </div>
+
+   <!-- ===== FOOTER ===== -->
+<footer>
+  <div class="small muted">
+    Built with plain HTML &amp; CSS · Last updated November 2025
+  </div>
+</footer>
   </main>
 
+  <!-- ========================
+       JS: SIMPLE TAB ROUTER
+  ========================= -->
   <script>
   const navLinks = document.querySelectorAll('nav a.nav-link');
   const sections = document.querySelectorAll('.content-section');
