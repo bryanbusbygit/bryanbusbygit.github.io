@@ -7,8 +7,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Bryan C. Busby</title>
-  <meta name="description" content="bryan's personal website.">
-  <link rel="preload" href="assets/petersen.gif" as="image">
+  <meta name="description" content="Undergraduate mathematician interested in graph theory and combinatorics.">
+  <link rel="preload" href="assets/isomorphisms2.gif" as="image">
 
   <style>
   /* ========================
@@ -27,7 +27,7 @@
     --accent-link-hover:#000;
     --code-bg:#111;
     --code-fg:#f5f5f5;
-    --bg-overlay-top:rgba(0,0,0,.10);
+    --bg-overlay-top:rgba(0,0,0,0.10);
     --bg-overlay-bottom:rgba(0,0,0,.10);
 
     --space-xs:4px;
@@ -45,7 +45,7 @@
     height:100%;
   }
   body{
-    --bg-img:url('assets/view8.JPG');
+    --bg-img:url('assets/view8.jpg');
     font-family:var(--mono);
     color:var(--ink);
     line-height:1.5;
@@ -74,13 +74,22 @@
     height:700px;
     margin-inline:auto;
     background:rgba(var(--bg-glass));
-    border:2px solid rgba(0,0,0,1);
+    border:2px solid rgba(0,0,0,0.4);
     box-shadow:none;
     padding:var(--space-lg) var(--space-xl) var(--space-lg);
     position:relative;
     backdrop-filter:blur(3px);
     display:flex;
     flex-direction:column;
+
+    /* fade in/out support */
+    opacity:1;
+    transition:opacity .25s ease-in-out;
+  }
+
+  /* When resizing, hide all content (container) so only background remains */
+  body.resizing .container{
+    opacity:0;
   }
 
   /* ========================
@@ -114,11 +123,11 @@
   }
 
   /* ========================
-     PROFILE IMAGE
+     PROFILE IMAGE (HEADER)
   ========================= */
   header img.profile{
-    width:150px;
-    height:150px;
+    width:130px;
+    height:130px;
     object-fit:cover;
     border:none;
     box-shadow:none;
@@ -245,6 +254,39 @@
   ========================= */
   .home-intro{
     max-width:36rem;
+  }
+
+  /* layout for home text + face image */
+  .home-layout{
+    display:flex;
+    gap:var(--space-lg);
+    align-items:flex-start;
+    margin-top:var(--space-sm);
+  }
+  .home-text{
+    flex:1 1 0;
+  }
+  .home-photo img{
+    display:block;
+    width:200px;
+    height:200px;
+    object-fit:cover;
+    border-radius:0px;
+    border:1px solid rgba(0,0,0,.09);
+
+    /* base transform (flip, rotate, shift) stored in a variable */
+    --home-face-transform: scaleX(1) rotate(5deg) translate(5px, 190px);
+    transform: var(--home-face-transform);
+    transition:transform .25s cubic-bezier(.66,.04,.3,1);
+  }
+
+  @media (hover:hover){
+    .home-photo img:hover,
+    .home-photo img:focus-visible{
+      /* same pop as header gif + keep base transform */
+      transform: var(--home-face-transform) scale(1.04);
+      outline:none;
+    }
   }
 
   /* ========================
@@ -423,6 +465,15 @@
     .other-layout{
       grid-template-columns:1fr;
     }
+    /* stack home text on small screens */
+    .home-layout{
+      flex-direction:column;
+      align-items:flex-start;
+    }
+    /* hide face image when layout is small */
+    .home-photo{
+      display:none;
+    }
   }
 
   /* ========================
@@ -435,6 +486,17 @@
     header img.profile:hover,
     header img.profile:focus-visible{
       transform:none;
+    }
+    .home-photo img{
+      transition:none;
+    }
+    .home-photo img:hover,
+    .home-photo img:focus-visible{
+      transform:var(--home-face-transform);
+    }
+    /* If user prefers reduced motion, keep container visible during resize */
+    body.resizing .container{
+      opacity:1;
     }
   }
   </style>
@@ -470,17 +532,26 @@
       <!-- ===== SECTION: HOME ===== -->
       <section class="content-section active" data-section="home">
         <h2>Home</h2>
-        <p class="home-intro">
-          An undergraduate at the University of Puerto Rico. Interested in graph theory, dynamics, and combinatorics.
-          This page collects my research projects, manuscripts in preparation, and a few places where I share
-          mathematics online.
-        </p>
 
-        <!-- HOME: brief research focus sentence -->
-        <p class="home-intro">
-          Current work centers on discrete dynamical systems, transient behavior of state graphs,
-          and arithmetical structures on cycles with multi-edges.
-        </p>
+        <div class="home-layout">
+          <div class="home-text">
+            <p class="home-intro">
+              An undergraduate at the University of Puerto Rico. Interested in graph theory, dynamics, and combinatorics.
+              This page collects my research projects, manuscripts in preparation, and a few places where I share
+              mathematics online.
+            </p>
+
+            <!-- HOME: brief research focus sentence -->
+            <p class="home-intro">
+              Current work centers on discrete dynamical systems, transient behavior of state graphs,
+              and arithmetical structures on cycles with multi-edges.
+            </p>
+          </div>
+
+          <div class="home-photo">
+            <img src="assets/face.jpg" alt="Photo of Bryan C. Busby">
+          </div>
+        </div>
       </section>
 
       <!-- ===== SECTION: RESEARCH SUMMARY ===== -->
@@ -556,11 +627,11 @@
           <div>
             <ul class="contact-list">
               <li><a href="mailto:bryan.busby@upr.edu" aria-label="Email">Email</a></li>
-                           <li><a href="https://www.youtube.com/@busbymath" target="_blank" rel="noopener">YouTube</a></li>
-                            <li><a href="https://x.com/brybusby" target="_blank" rel="noopener">X</a></li>
+              <li><a href="https://www.youtube.com/@busbymath" target="_blank" rel="noopener">YouTube</a></li>
+              <li><a href="https://x.com/brybusby" target="_blank" rel="noopener">X</a></li>
             </ul>
             <p class="small muted other-note"></p>
-            Graph theory videos on YouTube. Bits of writing on X.  
+            Graph theory videos on YouTube. Bits of writing on X.
           </div>
 
           <!-- "Now" card with current focuses -->
@@ -576,11 +647,11 @@
     </div>
 
    <!-- ===== FOOTER ===== -->
-<footer>
-  <div class="small muted">
-    Built with plain HTML &amp; CSS · Last updated November 2025
-  </div>
-</footer>
+   <footer>
+     <div class="small muted">
+       Built with plain HTML &amp; CSS · Last updated November 2025
+     </div>
+   </footer>
   </main>
 
   <!-- ========================
@@ -606,6 +677,22 @@
         }
       });
     });
+  });
+
+  // ===========================
+  // RESIZE FADE EFFECT
+  // ===========================
+  let resizeTimer;
+
+  window.addEventListener('resize', () => {
+    // Add class to hide the container while resizing
+    document.body.classList.add('resizing');
+
+    // Debounce: when resizing stops, remove class
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      document.body.classList.remove('resizing');
+    }, 800); // adjust delay if you want longer/shorter pause
   });
   </script>
 </body>
