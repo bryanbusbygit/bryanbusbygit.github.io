@@ -268,14 +268,14 @@
   }
   .home-photo img{
     display:block;
-    width:200px;
-    height:200px;
+    width:100px;
+    height:100px;
     object-fit:cover;
     border-radius:0px;
     border:1px solid rgba(0,0,0,.09);
 
     /* base transform (flip, rotate, shift) stored in a variable */
-    --home-face-transform: scaleX(1) rotate(5deg) translate(5px, 190px);
+    --home-face-transform: scaleX(1) rotate(0deg) translate(-50px, 190px);
     transform: var(--home-face-transform);
     transition:transform .25s cubic-bezier(.66,.04,.3,1);
   }
@@ -530,29 +530,25 @@
     <!-- ===== SCROLLABLE CONTENT AREA ===== -->
     <div class="content-wrapper" id="content-wrapper">
       <!-- ===== SECTION: HOME ===== -->
-      <section class="content-section active" data-section="home">
-        <h2>Home</h2>
+     <section class="content-section active" data-section="home">
+  <h2>Home</h2>
 
-        <div class="home-layout">
-          <div class="home-text">
-            <p class="home-intro">
-              An undergraduate at the University of Puerto Rico. Interested in graph theory, dynamics, and combinatorics.
-              This page collects my research projects, manuscripts in preparation, and a few places where I share
-              mathematics online.
-            </p>
+  <div class="home-layout">
+    <div class="home-text">
+      <p class="home-intro">
+        An undergraduate at the University of Puerto Rico. Interested in graph theory, dynamics, and combinatorics.
+        This page collects my research projects, manuscripts in preparation, and a few places where I share
+        mathematics online.
+      </p>
 
-            <!-- HOME: brief research focus sentence -->
-            <p class="home-intro">
-              Current work centers on discrete dynamical systems, transient behavior of state graphs,
-              and arithmetical structures on cycles with multi-edges.
-            </p>
-          </div>
-
-          <div class="home-photo">
-            <img src="assets/face.jpg" alt="Photo of Bryan C. Busby">
-          </div>
-        </div>
-      </section>
+      <!-- HOME: brief research focus sentence -->
+      <p class="home-intro">
+        Current work centers on discrete dynamical systems, transient behavior of state graphs,
+        and arithmetical structures on cycles with multi-edges.
+      </p>
+    </div>
+  </div>
+</section>
 
       <!-- ===== SECTION: RESEARCH SUMMARY ===== -->
       <section class="content-section" data-section="research">
