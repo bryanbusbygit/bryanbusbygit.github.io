@@ -74,22 +74,16 @@
     height:700px;
     margin-inline:auto;
     background:rgba(var(--bg-glass));
-    border:2px solid rgba(0,0,0,0.4);
-    box-shadow:none;
+    border:0px solid rgba(0,0,0,0.4);
+    border-radius:0px;
+    box-shadow:
+      0 18px 45px rgba(0,0,0,0.45);
     padding:var(--space-lg) var(--space-xl) var(--space-lg);
     position:relative;
-    backdrop-filter:blur(3px);
+    backdrop-filter:blur(6px);
     display:flex;
     flex-direction:column;
-
-    /* fade in/out support */
-    opacity:1;
-    transition:opacity .25s ease-in-out;
-  }
-
-  /* When resizing, hide all content (container) so only background remains */
-  body.resizing .container{
-    opacity:0;
+    overflow:hidden; /* keeps rounded corners clean */
   }
 
   /* ========================
@@ -256,7 +250,7 @@
     max-width:36rem;
   }
 
-  /* layout for home text + face image */
+  /* layout for home text */
   .home-layout{
     display:flex;
     gap:var(--space-lg);
@@ -265,28 +259,6 @@
   }
   .home-text{
     flex:1 1 0;
-  }
-  .home-photo img{
-    display:block;
-    width:100px;
-    height:100px;
-    object-fit:cover;
-    border-radius:0px;
-    border:1px solid rgba(0,0,0,.09);
-
-    /* base transform (flip, rotate, shift) stored in a variable */
-    --home-face-transform: scaleX(1) rotate(0deg) translate(-50px, 190px);
-    transform: var(--home-face-transform);
-    transition:transform .25s cubic-bezier(.66,.04,.3,1);
-  }
-
-  @media (hover:hover){
-    .home-photo img:hover,
-    .home-photo img:focus-visible{
-      /* same pop as header gif + keep base transform */
-      transform: var(--home-face-transform) scale(1.04);
-      outline:none;
-    }
   }
 
   /* ========================
@@ -470,10 +442,6 @@
       flex-direction:column;
       align-items:flex-start;
     }
-    /* hide face image when layout is small */
-    .home-photo{
-      display:none;
-    }
   }
 
   /* ========================
@@ -486,17 +454,6 @@
     header img.profile:hover,
     header img.profile:focus-visible{
       transform:none;
-    }
-    .home-photo img{
-      transition:none;
-    }
-    .home-photo img:hover,
-    .home-photo img:focus-visible{
-      transform:var(--home-face-transform);
-    }
-    /* If user prefers reduced motion, keep container visible during resize */
-    body.resizing .container{
-      opacity:1;
     }
   }
   </style>
@@ -512,14 +469,12 @@
       <div>
         <h1>Bryan C. Busby</h1>
         <div class="subtitle"></div>
-        <span class="institution">University of Puerto Rico</span>
 
         <!-- Primary navigation controlling sections below -->
         <nav aria-label="Primary">
           <a href="#" class="nav-link nav-active" data-section="home">Home</a>
           <a href="#" class="nav-link" data-section="research">Research</a>
           <a href="#" class="nav-link" data-section="manuscripts">Manuscripts</a>
-          <a href="#" class="nav-link" data-section="cv">CV</a>
           <a href="#" class="nav-link" data-section="other">Other</a>
         </nav>
       </div>
@@ -530,25 +485,25 @@
     <!-- ===== SCROLLABLE CONTENT AREA ===== -->
     <div class="content-wrapper" id="content-wrapper">
       <!-- ===== SECTION: HOME ===== -->
-     <section class="content-section active" data-section="home">
-  <h2>Home</h2>
+      <section class="content-section active" data-section="home">
+        <h2>Home</h2>
 
-  <div class="home-layout">
-    <div class="home-text">
-      <p class="home-intro">
-        An undergraduate at the University of Puerto Rico. Interested in graph theory, dynamics, and combinatorics.
-        This page collects my research projects, manuscripts in preparation, and a few places where I share
-        mathematics online.
-      </p>
+        <div class="home-layout">
+          <div class="home-text">
+            <p class="home-intro">
+Interested in graph theory, dynamics, and combinatorics.
+              This page collects my research projects, manuscripts in preparation, and a few places where I share
+              mathematics online.
+            </p>
 
-      <!-- HOME: brief research focus sentence -->
-      <p class="home-intro">
-        Current work centers on discrete dynamical systems, transient behavior of state graphs,
-        and arithmetical structures on cycles with multi-edges.
-      </p>
-    </div>
-  </div>
-</section>
+            <!-- HOME: brief research focus sentence -->
+            <p class="home-intro">
+              Current work centers on discrete dynamical systems, transient behavior of state graphs,
+              and arithmetical structures on cycles with multi-edges.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <!-- ===== SECTION: RESEARCH SUMMARY ===== -->
       <section class="content-section" data-section="research">
@@ -603,31 +558,31 @@
         </div>
       </section>
 
-      <!-- ===== SECTION: CV BUTTON ===== -->
-      <section class="content-section" data-section="cv">
-        <h2>CV</h2>
-        <p>
-          <a class="button" href="assets/Bryan_Busby_CV.pdf" target="_blank" rel="noopener">
-            Open CV
-          </a>
-        </p>
-        <p class="small muted">11/19/2025</p>
-      </section>
-
-      <!-- ===== SECTION: OTHER / CONTACT / NOW ===== -->
+      <!-- ===== SECTION: OTHER / CONTACT / NOW / CV ===== -->
       <section class="content-section" data-section="other">
         <h2>Other</h2>
 
         <div class="other-layout">
-          <!-- Contact links + optional note -->
+          <!-- Contact links + optional note + CV -->
           <div>
             <ul class="contact-list">
               <li><a href="mailto:bryan.busby@upr.edu" aria-label="Email">Email</a></li>
               <li><a href="https://www.youtube.com/@busbymath" target="_blank" rel="noopener">YouTube</a></li>
               <li><a href="https://x.com/brybusby" target="_blank" rel="noopener">X</a></li>
             </ul>
+
             <p class="small muted other-note"></p>
             Graph theory videos on YouTube. Bits of writing on X.
+
+            <p class="muted" style="margin-top: var(--space-md);">
+              if you are into cv's here you can download mines.
+            </p>
+            <p>
+              <a class="button" href="assets/Bryan_Busby_CV.pdf" target="_blank" rel="noopener">
+                Open CV
+              </a>
+            </p>
+            <p class="small muted">11/19/2025</p>
           </div>
 
           <!-- "Now" card with current focuses -->
@@ -645,7 +600,7 @@
    <!-- ===== FOOTER ===== -->
    <footer>
      <div class="small muted">
-       Built with plain HTML &amp; CSS · Last updated November 2025
+Last updated: December 2025
      </div>
    </footer>
   </main>
@@ -673,22 +628,6 @@
         }
       });
     });
-  });
-
-  // ===========================
-  // RESIZE FADE EFFECT
-  // ===========================
-  let resizeTimer;
-
-  window.addEventListener('resize', () => {
-    // Add class to hide the container while resizing
-    document.body.classList.add('resizing');
-
-    // Debounce: when resizing stops, remove class
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      document.body.classList.remove('resizing');
-    }, 800); // adjust delay if you want longer/shorter pause
   });
   </script>
 </body>
