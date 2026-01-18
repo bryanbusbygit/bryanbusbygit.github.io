@@ -7,8 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Bryan C. Busby</title>
-  <meta name="description" content="Undergraduate mathematician working in discrete dynamical systems and graph theory.">
-  <link rel="preload" href="assets/isomorphisms2.gif" as="image">
+  <meta name="description" content="Undergraduate mathematician interested in graph theory and combinatorics.">
 
   <style>
   /* ========================
@@ -25,16 +24,58 @@
     --mono:'Monaco',Monaco,Monaco;
     --accent-link:#000;
     --accent-link-hover:#000;
+    --poster-link:#0645ad;
     --code-bg:#111;
     --code-fg:#f5f5f5;
     --bg-overlay-top:rgba(0,0,0,0.10);
     --bg-overlay-bottom:rgba(0,0,0,.10);
+    --page-bg:#e5e5e5;
+    --card-border:rgba(0,0,0,0.4);
+    --line:#000;
+    --shadow:#000;
+    --card-bg:rgba(255,255,255,0.9);
+    --badge-bg:#000;
+    --badge-fg:#fff;
+    --button-bg:#000;
+    --button-fg:#fff;
+    --button-hover:#111;
+    --muted:#333;
+    --small:#222;
 
     --space-xs:4px;
     --space-sm:8px;
     --space-md:12px;
     --space-lg:20px;
     --space-xl:32px;
+
+    --text-lg:2.25rem;
+    --text-md:.95rem;
+    --text-sm:.82rem;
+    --text-xs:.7rem;
+    --profile-size:120px;
+  }
+  body.theme-dark{
+    --bg-glass:14 14 14 / 0.9;
+    --ink:#f1f1f1;
+    --accent-link:#f1f1f1;
+    --accent-link-hover:#ffffff;
+    --poster-link:#b6f2a6;
+    --code-bg:#f1f1f1;
+    --code-fg:#0c0c0c;
+    --bg-overlay-top:rgba(255,255,255,0.08);
+    --bg-overlay-bottom:rgba(255,255,255,0.08);
+    --page-bg:#111;
+    --card-border:rgba(255,255,255,0.35);
+    --line:#e2e2e2;
+    --shadow:#cfcfcf;
+    --card-bg:rgba(24,24,24,0.95);
+    --badge-bg:#f1f1f1;
+    --badge-fg:#0c0c0c;
+    --button-bg:#f1f1f1;
+    --button-fg:#0c0c0c;
+    --button-hover:#ffffff;
+    --muted:#c7c7c7;
+    --small:#d6d6d6;
   }
 
   /* ========================
@@ -47,22 +88,17 @@
   body{
     font-family:var(--mono);
     color:var(--ink);
-    line-height:1.5;
-    height:100%;
+    font-size:15px;
+    line-height:1.55;
     min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
     padding:var(--space-xl);
-    background:
-      linear-gradient(var(--bg-overlay-top),var(--bg-overlay-bottom)),
-      var(--bg-img) center/cover no-repeat fixed;
-    background-attachment:fixed;
-    background-position:center;
-    background-size:cover;
+    background:var(--page-bg);
     -webkit-font-smoothing:antialiased;
     position:relative;
-    overflow:hidden;
+    overflow:auto;
   }
 
   /* ========================
@@ -70,45 +106,49 @@
   ========================= */
   .container{
     width:900px;
-    height:700px;
+    min-height:640px;
     margin-inline:auto;
     background:rgba(var(--bg-glass));
-    border:0px solid rgba(0,0,0,0.4);
-    border-radius:0px;
-    box-shadow:
-      0 18px 45px rgba(0,0,0,0.45);
+    border:2px solid var(--card-border);
+    box-shadow:none;
     padding:var(--space-lg) var(--space-xl) var(--space-lg);
     position:relative;
-    backdrop-filter:blur(6px);
+    backdrop-filter:blur(3px);
     display:flex;
     flex-direction:column;
-    overflow:hidden; /* keeps rounded corners clean */
+    z-index:1;
+    animation:fade-up .55s ease-out both;
   }
 
   /* ========================
      HEADER: NAME / TITLE / NAV
   ========================= */
   header{
-    display:flex;
-    justify-content:space-between;
-    gap:var(--space-lg);
-    flex-wrap:wrap;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:start;
+    column-gap:var(--space-lg);
     margin-bottom:var(--space-md);
   }
+  header > div{
+    min-width:0;
+    position:relative;
+    z-index:2;
+  }
   header h1{
-    font-size:2.15rem;
+    font-size:var(--text-lg);
     letter-spacing:.5px;
     margin-bottom:var(--space-xs);
   }
   .subtitle{
-    font-size:.9rem;
+    font-size:.85rem;
     text-transform:uppercase;
-    letter-spacing:2px;
+    letter-spacing:1.5px;
     font-weight:bold;
     margin-bottom:var(--space-xs);
   }
   .institution{
-    font-size:.7rem;
+    font-size:var(--text-xs);
     letter-spacing:1px;
     text-transform:uppercase;
     margin-top:var(--space-xs);
@@ -119,12 +159,16 @@
      PROFILE IMAGE (HEADER)
   ========================= */
   header img.profile{
-    width:130px;
-    height:130px;
-    object-fit:cover;
+    object-fit:contain;
+    object-position:center;
     border:none;
     box-shadow:none;
     transition:transform .25s cubic-bezier(.66,.04,.3,1);
+    align-self:start;
+    width:var(--profile-size);
+    height:var(--profile-size);
+    z-index:1;
+    cursor:pointer;
   }
   @media (hover:hover){
     header img.profile:hover,
@@ -141,7 +185,7 @@
     display:flex;
     gap:var(--space-md);
     flex-wrap:wrap;
-    font-size:.78rem;
+    font-size:var(--text-sm);
     font-weight:700;
     letter-spacing:1px;
     text-transform:uppercase;
@@ -152,13 +196,6 @@
     text-decoration:none;
     position:relative;
     padding:4px 2px;
-    background:repeating-linear-gradient(
-      0deg,
-      rgba(0,0,0,0) 0 4px,
-      rgba(0,0,0,.05) 4px 5px
-    );
-    background-size:100% 9px;
-    animation:scan 12s linear infinite;
   }
   nav a::after{
     content:"";
@@ -167,7 +204,7 @@
     bottom:0;
     height:2px;
     width:0;
-    background:#000;
+    background:var(--line);
     transition:width .28s cubic-bezier(.66,.04,.3,1),
                background-color .3s;
   }
@@ -183,11 +220,6 @@
     width:100%;
     background:var(--accent-link-hover);
   }
-  @keyframes scan{
-    0%{background-position:0 0;}
-    100%{background-position:0 9px;}
-  }
-
   /* ========================
      MAIN SCROLLABLE CONTENT
   ========================= */
@@ -195,8 +227,7 @@
     flex:1 1 auto;
     margin-top:var(--space-md);
     margin-bottom:var(--space-md);
-    overflow:auto;
-    padding-right:6px;
+    overflow:visible;
   }
 
   /* ========================
@@ -214,24 +245,17 @@
      SECTION HEADINGS / TEXT
   ========================= */
   section h2{
-    font-size:1.35rem;
+    font-size:1.3rem;
     margin-bottom:var(--space-sm);
-    border-bottom:2px solid #000;
+    border-bottom:2px solid var(--line);
     padding-bottom:var(--space-xs);
     position:relative;
   }
-  section h2::before{
-    content:"§";
-    font-size:.9rem;
-    position:absolute;
-    left:-20px;
-    top:4px;
-    opacity:.6;
-  }
+  section h2::before{content:"";}
   section p,
   section ul,
   section ol{
-    font-size:.92rem;
+    font-size:var(--text-md);
     margin-top:var(--space-sm);
   }
   section ul{
@@ -243,21 +267,48 @@
   }
 
   /* ========================
-     HOME SECTION HELPERS
+     LANDING SECTION
   ========================= */
-  .home-intro{
-    max-width:36rem;
+  .landing-intro{
+    max-width:34rem;
   }
-
-  /* layout for home text */
-  .home-layout{
-    display:flex;
+  .content-section[data-section="landing"] h2{
+    border-bottom:none;
+    padding-bottom:0;
+  }
+  .content-section[data-section="landing"] p{
+    margin-top:0;
+  }
+  .content-section[data-section="landing"] .choice-grid{
+    margin-top:var(--space-lg);
+  }
+  .choice-grid{
+    display:grid;
     gap:var(--space-lg);
-    align-items:flex-start;
-    margin-top:var(--space-sm);
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    margin-top:var(--space-md);
   }
-  .home-text{
-    flex:1 1 0;
+  .choice-card{
+    border:2px solid var(--line);
+    padding:var(--space-md);
+    background:var(--card-bg);
+    text-decoration:none;
+    color:var(--ink);
+    box-shadow:4px 4px 0 var(--shadow);
+    display:block;
+  }
+  .choice-card h3{
+    font-size:.92rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:var(--space-xs);
+  }
+  .choice-card p{
+    font-size:var(--text-sm);
+  }
+  .choice-card:hover{
+    transform:translate(2px,2px);
+    box-shadow:2px 2px 0 var(--shadow);
   }
 
   /* ========================
@@ -266,21 +317,37 @@
   .grid-two{
     display:grid;
     gap:var(--space-md) var(--space-xl);
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    grid-template-columns:1fr;
   }
   .pub{
-    font-size:.85rem;
+    font-size:var(--text-sm);
     line-height:1.4;
     margin-bottom:var(--space-md);
   }
   .badge{
     display:inline-block;
-    background:#000;
-    color:#fff;
+    background:var(--badge-bg);
+    color:var(--badge-fg);
     font-size:.65rem;
     padding:2px 6px 3px;
     letter-spacing:1px;
     margin-left:6px;
+  }
+  .section-subhead{
+    font-size:1.05rem;
+    margin-top:var(--space-md);
+    border-bottom:1px solid var(--line);
+    padding-bottom:var(--space-xs);
+  }
+  .resource-link{
+    display:inline-block;
+    font-size:var(--text-sm);
+    letter-spacing:1px;
+    text-transform:uppercase;
+    text-decoration:none;
+    border-bottom:1px solid var(--line);
+    margin-top:4px;
+    color:var(--poster-link);
   }
 
   /* ========================
@@ -288,23 +355,23 @@
   ========================= */
   .button{
     display:inline-block;
-    background:#000;
-    color:#fff;
+    background:var(--button-bg);
+    color:var(--button-fg);
     padding:8px 14px;
-    font-size:.75rem;
+    font-size:var(--text-sm);
     font-weight:700;
     letter-spacing:1px;
     text-transform:uppercase;
     text-decoration:none;
-    box-shadow:4px 4px 0 #000;
+    box-shadow:4px 4px 0 var(--shadow);
     margin-top:var(--space-sm);
   }
   .button:active{
     transform:translate(2px,2px);
-    box-shadow:2px 2px 0 #000;
+    box-shadow:2px 2px 0 var(--shadow);
   }
   .button:hover{
-    background:#111;
+    background:var(--button-hover);
   }
 
   /* ========================
@@ -315,7 +382,7 @@
     display:flex;
     flex-wrap:wrap;
     gap:var(--space-sm) var(--space-xl);
-    font-size:.85rem;
+    font-size:var(--text-sm);
     padding-left:0;
     margin-top:var(--space-sm);
   }
@@ -323,13 +390,16 @@
     text-decoration:none;
     color:var(--accent-link);
     font-weight:700;
-    border-bottom:1px dotted #000;
+    border-bottom:1px dotted var(--line);
   }
   .contact-list a:hover{
-    border-bottom:1px solid #000;
+    border-bottom:1px solid var(--line);
   }
 
   .other-note{
+    margin-top:var(--space-sm);
+  }
+  .date-stamp{
     margin-top:var(--space-sm);
   }
 
@@ -344,14 +414,14 @@
   }
 
   .now-card{
-    border:2px solid #000;
-    box-shadow:4px 4px 0 #000;
+    border:1px solid var(--line);
+    box-shadow:2px 2px 0 var(--shadow);
     padding:var(--space-sm) var(--space-md);
-    background:rgba(255,255,255,0.9);
-    font-size:.85rem;
+    background:var(--card-bg);
+    font-size:var(--text-sm);
   }
   .now-card h3{
-    font-size:.9rem;
+    font-size:.88rem;
     text-transform:uppercase;
     letter-spacing:1px;
     margin-bottom:var(--space-xs);
@@ -369,13 +439,13 @@
      SMALL / MUTED TEXT HELPERS
   ========================= */
   .small{
-    font-size:.7rem;
+    font-size:var(--text-xs);
     letter-spacing:1px;
     text-transform:uppercase;
-    color:#222;
+    color:var(--small);
   }
   .muted{
-    color:#333;
+    color:var(--muted);
   }
 
   /* ========================
@@ -383,13 +453,23 @@
   ========================= */
   footer{
     text-align:center;
-    font-size:.7rem;
-    border-top:2px solid #000;
+    font-size:var(--text-xs);
+    border-top:1px solid var(--line);
     padding-top:var(--space-sm);
     margin-top:var(--space-md);
     letter-spacing:1px;
     opacity:.9;
     flex-shrink:0;
+  }
+  @keyframes fade-up{
+    from{
+      opacity:0;
+      transform:translateY(10px);
+    }
+    to{
+      opacity:1;
+      transform:translateY(0);
+    }
   }
   footer a{
     color:var(--accent-link);
@@ -402,10 +482,10 @@
   /* ========================
      RESPONSIVE ADJUSTMENTS
   ========================= */
-  @media (max-width:940px){
+  @media (max-width:820px){
     body{
       overflow:auto;
-      align-items:flex-start;
+      align-items:center;
       padding:16px 8px;
     }
     .container{
@@ -416,30 +496,22 @@
       padding:var(--space-lg) var(--space-md);
     }
     header{
-      justify-content:center;
+      --profile-size:110px;
       text-align:center;
-      gap:var(--space-md);
       margin-bottom:var(--space-md);
     }
     header img.profile{
-      order:-1;
-      width:120px;
-      height:120px;
+      justify-self:end;
+    }
+    header > div{
+      margin-inline:auto;
     }
     nav{
       justify-content:center;
       margin-top:var(--space-sm);
     }
-    section h2::before{
-      left:-14px;
-    }
     .other-layout{
       grid-template-columns:1fr;
-    }
-    /* stack home text on small screens */
-    .home-layout{
-      flex-direction:column;
-      align-items:flex-start;
     }
   }
 
@@ -447,18 +519,25 @@
      REDUCED MOTION PREFERENCES
   ========================= */
   @media (prefers-reduced-motion: reduce){
-    nav a{
-      animation:none;
-    }
     header img.profile:hover,
     header img.profile:focus-visible{
       transform:none;
     }
+    .container{
+      animation:none;
+    }
+  }
+  .choice-card:focus-visible,
+  .button:focus-visible,
+  .contact-list a:focus-visible,
+  .resource-link:focus-visible{
+    outline:2px solid var(--line);
+    outline-offset:2px;
   }
   </style>
 </head>
 
-<body>
+  <body>
   <!-- ========================
        MAIN PAGE STRUCTURE
   ========================= -->
@@ -467,37 +546,41 @@
     <header>
       <div>
         <h1>Bryan C. Busby</h1>
-        <div class="subtitle"></div>
+        <span class="institution">University of Puerto Rico</span>
 
         <!-- Primary navigation controlling sections below -->
         <nav aria-label="Primary">
-          <a href="#" class="nav-link nav-active" data-section="home">Home</a>
+          <a href="#" class="nav-link nav-active" data-section="landing">Home</a>
           <a href="#" class="nav-link" data-section="research">Research</a>
-          <a href="#" class="nav-link" data-section="manuscripts">Manuscripts</a>
           <a href="#" class="nav-link" data-section="other">Other</a>
         </nav>
       </div>
 
-      <img src="assets/petersen.gif" alt="Portrait of Bryan Busby" class="profile">
+      <img
+        src="assets/alexgrey.jpg"
+        data-static-src="assets/alexgrey.jpg"
+        data-gif-src="assets/petersen.gif"
+        alt="Portrait illustration"
+        class="profile"
+      >
     </header>
 
     <!-- ===== SCROLLABLE CONTENT AREA ===== -->
     <div class="content-wrapper" id="content-wrapper">
-      <!-- ===== SECTION: HOME ===== -->
-      <section class="content-section active" data-section="home">
-        <h2>Home</h2>
-
-        <div class="home-layout">
-          <div class="home-text">
-            <p class="home-intro">
-              I work in discrete dynamical systems and graph theory, with a focus on transient behavior in state graphs and related combinatorial structure.
-              This page collects research projects, manuscripts, and a few places where I share mathematics online.
-            </p>
-
-            <p class="home-intro">
-              Current work includes bounds on transient lengths for monomial dynamical systems and arithmetical structures on cycles with a multi-edge.
-            </p>
-          </div>
+      <!-- ===== SECTION: LANDING ===== -->
+      <section class="content-section active" data-section="landing">
+        <p class="landing-intro">
+       Undergraduate mathematics student. A small collection of research projects and links to my math work elsewhere. Choose a section to view. <strong>If the website is hurting your eyes, click the image.</strong>
+        </p>
+        <div class="choice-grid">
+          <a href="#" class="choice-card nav-link" data-section="research">
+            <h3>Research Work</h3>
+            <p>Projects, posters, and manuscripts in preparation.</p>
+          </a>
+          <a href="#" class="choice-card nav-link" data-section="other">
+            <h3>Other</h3>
+            <p>Contact, CV, and updates.</p>
+          </a>
         </div>
       </section>
 
@@ -506,87 +589,74 @@
         <h2>Research</h2>
         <ul class="highlight-list">
           <li>
-            <strong>2025</strong> – Arithmetical Structures on Graphs (Enumerative Combinatorics) with A. Díaz-López.
+            <strong>2025</strong> – Arithmetical Structures on Graphs. Advised by A. Díaz-López, J. Louwsma (Enumerative Combinatorics)
             <br><span class="small">
-              <a href="assets/posters/2025_arithmetical_structures_poster.pdf" target="_blank" rel="noopener">Poster (PDF)</a>
+              <a class="resource-link" href="assets/posters/2025_arithmetical_structures_poster.pdf">Poster (PDF)</a>
             </span>
           </li>
           <li>
-            <strong>2024</strong> – Discrete Dynamical Systems (Algebraic Dynamics) with O. Colón-Reyes.
+            <strong>2024</strong> – Discrete Dynamical Systems. Advised by O. Colón-Reyes (Dynamical Systems)
             <br><span class="small">
-              <a href="assets/posters/2024_discrete_dynamical_systems_poster.pdf" target="_blank" rel="noopener">Poster (PDF)</a>
+              <a class="resource-link" href="assets/posters/2024_discrete_dynamical_systems_poster.pdf">Poster (PDF)</a>
             </span>
           </li>
           <li>
-            <strong>2023</strong> – 5G RF Propagation Measurements with GNU Radio (Debugging Hardware) with R.A. Rodríguez-Solís.
+            <strong>2023</strong> – 5G RF Propagation Measurements using GNU Radio. Advised by Rafael Solís (Debugging Hardware)
             <br><span class="small">
-              Built and debugged a GNU Radio measurement pipeline; studied how instrument tolerances affect downstream RF measurements.
+              <a class="resource-link" href="assets/posters/CarsePoster2023.pdf">Poster (PDF)</a>
             </span>
           </li>
           <li>
-            <strong>2021</strong> – Adjacency Matrices &amp; Walks (Graph Theory) with E. Benvenutti.
+            <strong>2021</strong> – Adjacency Matrices &amp; Walks. Advisor: E. Benvenutti (Graph Theory)
             <br><span class="small">
-              Studied walk-counting via adjacency-matrix products and related structural consequences.
             </span>
           </li>
         </ul>
-      </section>
-
-      <!-- ===== SECTION: MANUSCRIPTS ===== -->
-      <section class="content-section" data-section="manuscripts">
-        <h2>Manuscripts</h2>
+        <h3 class="section-subhead">Manuscripts</h3>
         <div class="grid-two">
           <div class="pub">
             <b>Transient Length Boundary for Monomial Dynamical Systems</b> (with O. Colón-Reyes)
             <span class="badge">In prep</span><br>
             <span class="muted small">
-              Bounds on transient lengths via cycle structure in the dependency graph and the induced Frobenius problem on cycle lengths.
-            </span>
+             We establish upper and lower bounds on the transient length of boolean monomial dynamical systems in terms of the Frobenius number of the set of directed cycle lengths and the diameter of the associated dependency graph.        </span>
           </div>
           <div class="pub">
-            <b>Arithmetical Structures on Cycles with a Multi-Edge</b> (with A. Díaz-López)
+            <b>Arithmetical Structures on Cycles with a Multi-Edge</b> (with A. Díaz-López, N. Dogbatse, P. Palma)
             <span class="badge">In prep</span><br>
             <span class="muted small">
-              Construction and enumeration of strongly smooth arithmetical structures on cycles with a multi-edge via Euclidean-algorithm parametrizations.
+              Using principles underlying the Euclidean algorithm, we construct strongly smooth arithmetical structures on cycles with a multi-edge.
             </span>
           </div>
         </div>
       </section>
 
-      <!-- ===== SECTION: OTHER / CONTACT / NOW / CV ===== -->
+      <!-- ===== SECTION: OTHER / CONTACT / NOW ===== -->
       <section class="content-section" data-section="other">
         <h2>Other</h2>
 
         <div class="other-layout">
-          <!-- Contact links + optional note + CV -->
+          <!-- Contact links + optional note -->
           <div>
             <ul class="contact-list">
               <li><a href="mailto:bryan.busby@upr.edu" aria-label="Email">Email</a></li>
               <li><a href="https://www.youtube.com/@busbymath" target="_blank" rel="noopener">YouTube</a></li>
               <li><a href="https://x.com/brybusby" target="_blank" rel="noopener">X</a></li>
             </ul>
-
-            <p class="muted" style="margin-top: var(--space-sm);">
-              Graph theory videos on YouTube. Short notes and updates on X.
-            </p>
-
-            <p class="muted" style="margin-top: var(--space-md);">
-              CV:
-            </p>
+            <p class="muted other-note">Graph theory videos on YouTube. Bits of writing on X.</p>
             <p>
-              <a class="button" href="assets/Bryan_Busby_CV.pdf" target="_blank" rel="noopener">
+              <a class="button" href="assets/Bryan_Busby_CV.pdf">
                 Open CV
               </a>
             </p>
-            <p class="small muted">11/19/2025</p>
+            <p class="small muted date-stamp">11/19/2025</p>
           </div>
 
           <!-- "Now" card with current focuses -->
           <aside class="now-card">
             <h3>Now</h3>
             <ul>
-              <li>Writing on transient lengths in finite dynamical systems.</li>
-              <li>Working on arithmetical structures on cycles with a multi-edge.</li>
+              <li>Writing about transient lengths in finite dynamical systems.</li>
+              <li>Studying arithmetical structures on cycles with a multi-edge.</li>
             </ul>
           </aside>
         </div>
@@ -596,7 +666,7 @@
    <!-- ===== FOOTER ===== -->
    <footer>
      <div class="small muted">
-       Last updated: December 2025
+       Built with plain HTML &amp; CSS · Last updated November 2025
      </div>
    </footer>
   </main>
@@ -605,26 +675,64 @@
        JS: SIMPLE TAB ROUTER
   ========================= -->
   <script>
-  const navLinks = document.querySelectorAll('nav a.nav-link');
-  const sections = document.querySelectorAll('.content-section');
+  const ENABLE_PROFILE_GIF = false;
+  const THEME_KEY = 'theme-preference';
 
-  navLinks.forEach(link => {
+  const allLinks = document.querySelectorAll('.nav-link');
+  const navLinks = document.querySelectorAll('nav .nav-link');
+  const sections = document.querySelectorAll('.content-section');
+  const setTheme = mode => {
+    document.body.classList.toggle('theme-dark', mode === 'dark');
+  };
+
+  const getInitialTheme = () => {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === 'dark' || saved === 'light') {
+      return saved;
+    }
+    return 'light';
+  };
+
+  const profileImg = document.querySelector('header img.profile');
+  if (profileImg) {
+    const gifSrc = profileImg.dataset.gifSrc;
+    const staticSrc = profileImg.dataset.staticSrc;
+    profileImg.src = ENABLE_PROFILE_GIF ? gifSrc : staticSrc;
+  }
+
+  const currentTheme = getInitialTheme();
+  setTheme(currentTheme);
+
+  if (profileImg) {
+    profileImg.addEventListener('click', () => {
+      const next = document.body.classList.contains('theme-dark') ? 'light' : 'dark';
+      localStorage.setItem(THEME_KEY, next);
+      setTheme(next);
+    });
+  }
+
+  const setActiveSection = target => {
+    navLinks.forEach(l => {
+      l.classList.toggle('nav-active', l.getAttribute('data-section') === target);
+    });
+
+    sections.forEach(sec => {
+      sec.classList.toggle('active', sec.getAttribute('data-section') === target);
+    });
+  };
+
+  setActiveSection('landing');
+
+  allLinks.forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
       const target = link.getAttribute('data-section');
-
-      navLinks.forEach(l => l.classList.remove('nav-active'));
-      link.classList.add('nav-active');
-
-      sections.forEach(sec => {
-        if (sec.getAttribute('data-section') === target) {
-          sec.classList.add('active');
-        } else {
-          sec.classList.remove('active');
-        }
-      });
+      if (target) {
+        setActiveSection(target);
+      }
     });
   });
-  </script>
+
+</script>
 </body>
 </html>
