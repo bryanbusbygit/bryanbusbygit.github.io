@@ -18,11 +18,11 @@
         --mono: 'Monaco', Monaco, Monaco;
         --accent-link: #000;
         --accent-link-hover: #000;
-        --poster-link: #0645ad;
-        --page-bg: #e5e5e5;
-        --card-border: rgba(0, 0, 0, 0.4);
-        --line: #000;
-        --shadow: #000;
+        --poster-link: #5a2ca0;
+        --page-bg: #ededed;
+        --card-border: rgba(0, 0, 0, 0.28);
+        --line: #111;
+        --shadow: #222;
         --card-bg: rgba(255, 255, 255, 0.9);
         --badge-bg: #000;
         --badge-fg: #fff;
@@ -40,14 +40,14 @@
         --text-md: 0.95rem;
         --text-sm: 0.82rem;
         --text-xs: 0.7rem;
-        --profile-size: 120px;
+        --profile-size: 96px;
       }
       body.theme-dark {
         --bg-glass: 14 14 14 / 0.9;
         --ink: #f1f1f1;
         --accent-link: #f1f1f1;
         --accent-link-hover: #ffffff;
-        --poster-link: #b6f2a6;
+        --poster-link: #cdb3ff;
         --page-bg: #111;
         --card-border: rgba(255, 255, 255, 0.35);
         --line: #e2e2e2;
@@ -81,13 +81,13 @@
         overflow: auto;
       }
       .container {
-        width: 900px;
-        min-height: 640px;
+        width: 760px;
+        min-height: 520px;
         margin-inline: auto;
         background: rgba(var(--bg-glass));
         border: 2px solid var(--card-border);
         box-shadow: none;
-        padding: var(--space-lg) var(--space-xl) var(--space-lg);
+        padding: var(--space-lg);
         position: relative;
         backdrop-filter: blur(3px);
         display: flex;
@@ -99,8 +99,8 @@
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: start;
-        column-gap: var(--space-lg);
-        margin-bottom: var(--space-md);
+        column-gap: var(--space-md);
+        margin-bottom: var(--space-sm);
       }
       header > div {
         min-width: 0;
@@ -124,19 +124,13 @@
         object-position: center;
         border: none;
         box-shadow: none;
-        transition: transform 0.25s cubic-bezier(0.66, 0.04, 0.3, 1);
         align-self: start;
         width: var(--profile-size);
         height: var(--profile-size);
         z-index: 1;
-        cursor: pointer;
-      }
-      @media (hover: hover) {
-        header img.profile:hover,
-        header img.profile:focus-visible {
-          transform: scale(1.04);
-          outline: none;
-        }
+        outline: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
       }
       nav {
         display: flex;
@@ -144,9 +138,9 @@
         flex-wrap: wrap;
         font-size: var(--text-sm);
         font-weight: 700;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
         text-transform: uppercase;
-        margin-top: var(--space-sm);
+        margin-top: var(--space-xs);
       }
       nav a {
         color: var(--accent-link);
@@ -170,6 +164,9 @@
         width: 100%;
         background: var(--accent-link-hover);
       }
+      nav a:visited {
+        color: var(--accent-link);
+      }
       nav a.nav-active {
         color: var(--accent-link-hover);
       }
@@ -179,25 +176,54 @@
       }
       .content-wrapper {
         flex: 1 1 auto;
-        margin-top: var(--space-md);
-        margin-bottom: var(--space-md);
+        margin-top: var(--space-sm);
+        margin-bottom: var(--space-sm);
         overflow: visible;
+        position: relative;
+        transition: height 0.75s ease-out;
       }
       .content-section {
-        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
       }
       .content-section.active {
-        display: block;
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .stagger-item {
+        opacity: 0;
+        transform: translateY(6px) scale(0.995);
+      }
+      .content-section.active .stagger-item {
+        animation: stagger-in 0.75s ease forwards;
+        animation-delay: var(--stagger-delay, 0ms);
       }
       section h2 {
         font-size: 1.3rem;
         margin-bottom: var(--space-sm);
-        border-bottom: 2px solid var(--line);
+        border-bottom: none;
         padding-bottom: var(--space-xs);
         position: relative;
       }
-      section h2::before {
+      section h2::after {
         content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        background: var(--line);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.6s ease;
+      }
+      .content-section.active h2::after {
+        transform: scaleX(1);
       }
       section p,
       section ul,
@@ -213,7 +239,7 @@
         padding: 6px 0;
       }
       .landing-intro {
-        max-width: 34rem;
+        max-width: 32rem;
       }
       .content-section[data-section="landing"] h2 {
         border-bottom: none;
@@ -233,11 +259,12 @@
       }
       .choice-card {
         border: 2px solid var(--line);
-        padding: var(--space-md);
+        padding: var(--space-lg);
+        min-height: 140px;
         background: var(--card-bg);
         text-decoration: none;
         color: var(--ink);
-        box-shadow: 4px 4px 0 var(--shadow);
+        box-shadow: 3px 3px 0 var(--shadow);
         display: block;
       }
       .choice-card h3 {
@@ -251,12 +278,13 @@
       }
       .choice-card:hover {
         transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0 var(--shadow);
+        box-shadow: 1px 1px 0 var(--shadow);
       }
       .grid-two {
         display: grid;
         gap: var(--space-md) var(--space-xl);
         grid-template-columns: 1fr;
+        margin-top: var(--space-sm);
       }
       .pub {
         font-size: var(--text-sm);
@@ -288,6 +316,9 @@
         margin-top: 4px;
         color: var(--poster-link);
       }
+      .resource-link:visited {
+        color: var(--poster-link);
+      }
       .button {
         display: inline-block;
         background: var(--button-bg);
@@ -298,12 +329,12 @@
         letter-spacing: 1px;
         text-transform: uppercase;
         text-decoration: none;
-        box-shadow: 4px 4px 0 var(--shadow);
+        box-shadow: 3px 3px 0 var(--shadow);
         margin-top: var(--space-sm);
       }
       .button:active {
         transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0 var(--shadow);
+        box-shadow: 1px 1px 0 var(--shadow);
       }
       .button:hover {
         background: var(--button-hover);
@@ -322,6 +353,9 @@
         color: var(--accent-link);
         font-weight: 700;
         border-bottom: 1px dotted var(--line);
+      }
+      .contact-list a:visited {
+        color: var(--accent-link);
       }
       .contact-list a:hover {
         border-bottom: 1px solid var(--line);
@@ -348,7 +382,7 @@
       .now-card h3 {
         font-size: 0.88rem;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.6px;
         margin-bottom: var(--space-xs);
       }
       .now-card ul {
@@ -388,9 +422,22 @@
           transform: translateY(0);
         }
       }
+      @keyframes stagger-in {
+        from {
+          opacity: 0;
+          transform: translateY(6px) scale(0.995);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
       footer a {
         color: var(--accent-link);
         text-decoration: none;
+      }
+      footer a:visited {
+        color: var(--accent-link);
       }
       footer a:hover {
         text-decoration: underline;
@@ -435,6 +482,22 @@
         .container {
           animation: none;
         }
+        .content-wrapper {
+          transition: none;
+        }
+        .content-section {
+          transition: none;
+          transform: none;
+        }
+        .stagger-item {
+          animation: none;
+          opacity: 1;
+          transform: none;
+        }
+        section h2::after {
+          transition: none;
+          transform: scaleX(1);
+        }
       }
       .choice-card:focus-visible,
       .button:focus-visible,
@@ -464,8 +527,8 @@
         <section class="content-section active" data-section="landing">
           <p class="landing-intro">
             Undergraduate mathematics student. A small collection of research projects and links
-            to my work elsewhere. Choose a section to view.
-            <strong>Click the image to toggle modes.</strong>
+            to my math work elsewhere. Choose a section to view.
+            <strong>If the website is hurting your eyes, click the image.</strong>
           </p>
           <div class="choice-grid">
             <a href="#" class="choice-card nav-link" data-section="research">
@@ -571,6 +634,7 @@
       const allLinks = document.querySelectorAll('.nav-link');
       const navLinks = document.querySelectorAll('nav .nav-link');
       const sections = document.querySelectorAll('.content-section');
+      const contentWrapper = document.getElementById('content-wrapper');
       const profileImg = document.querySelector('header img.profile');
 
       const setTheme = (mode) => {
@@ -595,17 +659,86 @@
         });
       }
 
-      const setActiveSection = (target) => {
+      const setWrapperHeight = () => {
+        const active = document.querySelector('.content-section.active');
+        if (!contentWrapper || !active) {
+          return;
+        }
+        contentWrapper.style.height = `${active.offsetHeight}px`;
+      };
+
+      const STAGGER_SELECTOR =
+        'h2, h3, p, ul, ol, .choice-card, .pub, .now-card, .contact-list, .button, ' +
+        '.resource-link, .other-layout > *, .grid-two > *';
+
+      const prepareStagger = (section) => {
+        if (!section) {
+          return;
+        }
+        const items = section.querySelectorAll(STAGGER_SELECTOR);
+        const isLanding = section.getAttribute('data-section') === 'landing';
+        items.forEach((item, index) => {
+          item.classList.add('stagger-item');
+          let delay = Math.min(index * 90, 540);
+          if (isLanding) {
+            const inChoice = item.classList.contains('choice-card') || item.closest('.choice-card');
+            delay = inChoice ? 160 : 0;
+          }
+          item.style.setProperty('--stagger-delay', `${delay}ms`);
+        });
+      };
+
+      const setActiveSection = (target, options = {}) => {
+        const { instant = false } = options;
+        const next = document.querySelector(`.content-section[data-section="${target}"]`);
+        const current = document.querySelector('.content-section.active');
+
+        if (!next || next === current) {
+          return;
+        }
+
         navLinks.forEach((link) => {
           link.classList.toggle('nav-active', link.getAttribute('data-section') === target);
         });
 
         sections.forEach((section) => {
-          section.classList.toggle('active', section.getAttribute('data-section') === target);
+          section.classList.toggle('active', section === next);
         });
+
+        if (!contentWrapper) {
+          return;
+        }
+
+        const startHeight = current ? current.offsetHeight : contentWrapper.offsetHeight;
+        const endHeight = next.offsetHeight;
+
+        if (instant) {
+          contentWrapper.style.height = `${endHeight}px`;
+          return;
+        }
+
+        contentWrapper.style.height = `${startHeight}px`;
+
+        requestAnimationFrame(() => {
+          contentWrapper.style.height = `${endHeight}px`;
+        });
+
+        const cleanup = (event) => {
+          if (event.propertyName !== 'height') {
+            return;
+          }
+          contentWrapper.style.height = `${endHeight}px`;
+          contentWrapper.removeEventListener('transitionend', cleanup);
+        };
+        contentWrapper.addEventListener('transitionend', cleanup);
       };
 
-      setActiveSection('landing');
+      sections.forEach((section) => prepareStagger(section));
+      setActiveSection('landing', { instant: true });
+
+      window.addEventListener('resize', () => {
+        setWrapperHeight();
+      });
 
       allLinks.forEach((link) => {
         link.addEventListener('click', (event) => {
