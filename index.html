@@ -84,7 +84,11 @@
         width: 760px;
         min-height: 520px;
         margin-inline: auto;
-        background: rgba(var(--bg-glass));
+        background-color: rgba(var(--bg-glass));
+        background-image:
+          linear-gradient(0deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55)),
+          repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.018) 0, rgba(0, 0, 0, 0.018) 1px, transparent 1px, transparent 6px),
+          repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.014) 0, rgba(0, 0, 0, 0.014) 1px, transparent 1px, transparent 5px);
         border: 2px solid var(--card-border);
         box-shadow: none;
         padding: var(--space-lg);
@@ -94,6 +98,9 @@
         flex-direction: column;
         z-index: 1;
         animation: fade-up 0.55s ease-out both;
+      }
+      body.theme-dark .container {
+        background-image: none;
       }
       header {
         display: grid;
