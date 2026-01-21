@@ -700,9 +700,13 @@
         const next = document.querySelector(`.content-section[data-section="${target}"]`);
         const current = document.querySelector('.content-section.active');
 
-        if (!next || next === current) {
-          return;
-        }
+        if (!next) {
+  return;
+}
+if (next === current) {
+  setWrapperHeight();
+  return;
+}
 
         navLinks.forEach((link) => {
           link.classList.toggle('nav-active', link.getAttribute('data-section') === target);
@@ -741,7 +745,9 @@
       };
 
       sections.forEach((section) => prepareStagger(section));
-      setActiveSection('landing', { instant: true });
+setWrapperHeight();                 // ADD
+window.addEventListener('load', setWrapperHeight); // ADD
+setActiveSection('landing', { instant: true });
 
       window.addEventListener('resize', () => {
         setWrapperHeight();
